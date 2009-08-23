@@ -21,7 +21,7 @@ Net::Lighthouse -
 
 =head1 VERSION
 
-This document describes Net::Lighthouse version 0.0.1
+This document describes Net::Lighthouse version 0.01
 
 
 =head1 SYNOPSIS
