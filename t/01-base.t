@@ -1,14 +1,14 @@
 use strict;
 use warnings;
 
-use Test::More tests => 13;
+use Test::More tests => 14;
 use MIME::Base64;
 
 use_ok('Net::Lighthouse');
 can_ok( 'Net::Lighthouse', 'new' );
 my $lh = Net::Lighthouse->new;
 isa_ok( $lh, 'Net::Lighthouse' );
-for (qw/account email password token ua/) {
+for (qw/account email password token base_url ua/) {
     can_ok( $lh, $_ );
 }
 
