@@ -1,5 +1,7 @@
 package Net::Lighthouse;
 use Any::Moose;
+use MIME::Base64;
+use LWP::UserAgent;
 
 our $VERSION = '0.01';
 has ['account', 'email', 'password', 'token'] => (
@@ -15,6 +17,22 @@ sub base_url {
     return 'http://' . $self->account . '.lighthouseapp.com';
 }
 
+sub ua {
+    my $self = shift;
+    my $ua = LWP::UserAgent->new( agent => 'net-lighthouse/' . $VERSION );
+
+    # email and password have high priority
+    if ( $self->email && $self->password ) {
+        my $base64 = encode_base64( $self->email . ':' . $self->password );
+        chomp $base64;
+        $ua->default_header( Authorization => 'Basic ' . $base64 );
+    }
+    elsif ( $self->token ) {
+        $ua->default_header( 'X-LighthouseToken', $self->token );
+    }
+
+    return $ua;
+}
 
 1;
 
