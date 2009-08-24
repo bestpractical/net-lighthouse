@@ -1,5 +1,6 @@
 package Net::Lighthouse::Project;
 use Any::Moose;
+use Params::Validate ':all';
 extends 'Net::Lighthouse';
 # read only attr
 has [
@@ -25,6 +26,35 @@ __PACKAGE__->meta->make_immutable;
 
 sub find {
     my $self = shift;
+    validate_pos( @_, { type => SCALAR, regex => qr/^\d+$/ } );
+    my $id = shift;
+    my $ua = $self->ua;
+    my $url = $self->base_url . '/projects/' . $id . '.xml';
+    my $res = $ua->get( $url );
+    if ( $res->is_success ) {
+        use XML::Simple;
+        my $ref = XMLin( $res->content );
+        %$ref = map { my $old = $_; s/-/_/g; $_ => $ref->{$old} } keys %$ref;
+        for my $k ( keys %$ref ) {
+            if ( ref $ref->{$k} eq 'HASH' ) {
+                if ( $ref->{$k}{nil} && $ref->{$k}{nil} eq 'true' ) {
+                    $ref->{$k} = undef;
+                }
+                elsif ( defined $ref->{$k}{content} ) {
+                    $ref->{$k} = $ref->{$k}{content};
+                }
+                else {
+                    warn 'no idea how to handle ' . $ref->{$k};
+                }
+            }
+        }
+        return Net::Lighthouse::Project->new( %$ref );
+    }
+    else {
+        die "try to get $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
 }
 
 sub save {
