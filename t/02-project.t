@@ -4,7 +4,10 @@ use warnings;
 use Test::More tests => 26;
 
 use_ok( 'Net::Lighthouse::Project' );
-can_ok( 'Net::Lighthouse::Project', 'new' );
+
+for my $class_method ( qw/new find/ ) {
+    can_ok( 'Net::Lighthouse::Project', $class_method );
+}
 my $project = Net::Lighthouse::Project->new;
 isa_ok( $project, 'Net::Lighthouse::Project' );
 isa_ok( $project, 'Net::Lighthouse' );
@@ -19,4 +22,3 @@ for my $attr( qw/archived created_at default_assigned_user_id
 for my $method ( qw/find save tickets/ ) {
     can_ok( $project, $method );
 }
-
