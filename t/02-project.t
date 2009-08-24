@@ -1,12 +1,13 @@
 use strict;
 use warnings;
 
-use Test::More tests => 25;
+use Test::More tests => 26;
 
 use_ok( 'Net::Lighthouse::Project' );
 can_ok( 'Net::Lighthouse::Project', 'new' );
 my $project = Net::Lighthouse::Project->new;
 isa_ok( $project, 'Net::Lighthouse::Project' );
+isa_ok( $project, 'Net::Lighthouse' );
 for my $attr( qw/archived created_at default_assigned_user_id
         default_milestone_id description description_html hidden
         id license name open_ticket_count permalink public 

@@ -1,6 +1,6 @@
 package Net::Lighthouse::Project;
 use Any::Moose;
-
+extends 'Net::Lighthouse';
 # read only attr
 has [
     qw/created_at default_assigned_user_id default_milestone_id description
