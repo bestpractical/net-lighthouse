@@ -1,15 +1,18 @@
 package Net::Lighthouse;
-use Any::Moose;
+
+use Moose;
+use MooseX::ClassAttribute;
 use MIME::Base64;
 use LWP::UserAgent;
 
 our $VERSION = '0.01';
-has ['account', 'email', 'password', 'token'] => (
+class_has ['account', 'email', 'password', 'token'] => (
     isa      => 'Str',
     is       => 'rw',
 );
 
-no Any::Moose;
+no Moose;
+no MooseX::ClassAttribute;
 __PACKAGE__->meta->make_immutable;
 
 sub base_url {
