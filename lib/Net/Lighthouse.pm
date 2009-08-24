@@ -10,6 +10,12 @@ has ['account', 'email', 'password', 'token'] => (
 no Any::Moose;
 __PACKAGE__->meta->make_immutable;
 
+sub base_url {
+    my $self = shift;
+    return 'http://' . $self->account . '.lighthouseapp.com';
+}
+
+
 1;
 
 __END__
