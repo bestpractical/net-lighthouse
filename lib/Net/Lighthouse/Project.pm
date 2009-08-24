@@ -8,7 +8,7 @@ has [
       send_changesets_to_events updated_at open_states_list closed_states_list
       open_states closed_states/
   ] => (
-    isa => 'Str',
+    isa => 'Maybe[Str]',
     is  => 'ro',
   );
 
@@ -16,7 +16,7 @@ has [
 # TODO access and license are not writable in official document,
 # but the official ruby api are. let's make them writable for now
 has [qw/archived access license name public/] => (
-    isa => 'Str',
+    isa => 'Maybe[Str]',
     is  => 'rw',
 );
 
@@ -25,7 +25,6 @@ __PACKAGE__->meta->make_immutable;
 
 sub find {
     my $self = shift;
-
 }
 
 sub save {
