@@ -1,14 +1,14 @@
 package Net::Lighthouse;
-
-use warnings;
-use strict;
-use Carp;
+use Any::Moose;
 
 our $VERSION = '0.01';
+has ['account', 'email', 'password', 'token'] => (
+    isa      => 'Str',
+    is       => 'rw',
+);
 
-
-
-
+no Any::Moose;
+__PACKAGE__->meta->make_immutable;
 
 1;
 
