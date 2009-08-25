@@ -34,7 +34,9 @@ $Mock_response->mock(
 );
 
 my $sd = Net::Lighthouse::Project->new( account => 'sunnavy' );
-$sd->load( 35918 );
+my $load = $sd->load( 35918 );
+is( $sd, $load, 'load return $self' );
+
 my %hash = (
     'description_html' => '<div><p>test for sd</p></div>',
     'open_states_list' => 'new,open',

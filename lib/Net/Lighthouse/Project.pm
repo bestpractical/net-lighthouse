@@ -32,7 +32,6 @@ sub load {
     my $res = $ua->get( $url );
     if ( $res->is_success ) {
         $self->load_from_xml( $res->content );
-        return 1;
     }
     else {
         die "try to get $url failed: "
@@ -77,6 +76,7 @@ sub _load_from_xml {
     for my $k ( keys %$ref ) {
         $self->{$k} = $ref->{$k};
     }
+    return $self;
 }
 
 sub create {
@@ -196,7 +196,6 @@ sub list {
                   grep { $self->$_ } qw/account email password token/
             );
             $p->_load_from_xml($_);
-            $p
         } @$ps;
     }
     else {
