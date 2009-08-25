@@ -47,6 +47,13 @@ sub load_from_xml {
 
     my $content = shift;
     my $ref = XMLin( $content );
+    return $self->_load_from_xml( $ref );
+}
+
+sub _load_from_xml {
+    my $self = shift;
+    validate_pos( @_, { type => HASHREF } );
+    my $ref = shift;
     %$ref = map { my $old = $_; s/-/_/g; $_ => $ref->{$old} } keys %$ref;
     for my $k ( keys %$ref ) {
         if ( ref $ref->{$k} eq 'HASH' ) {
@@ -174,6 +181,30 @@ sub delete {
           . $res->status_line . "\n"
           . $res->content;
     }
+}
+
+sub list {
+    my $self = shift;
+    my $ua = $self->ua;
+    my $url = $self->base_url . '/projects.xml';
+    my $res = $ua->get( $url );
+    if ( $res->is_success ) {
+        my $ps = XMLin( $res->content, KeyAttr => [] )->{project};
+        return map {
+            my $p = Net::Lighthouse::Project->new(
+                map { $_ => $self->$_ }
+                  grep { $self->$_ } qw/account email password token/
+            );
+            $p->_load_from_xml($_);
+            $p
+        } @$ps;
+    }
+    else {
+        die "try to get $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+
 }
 
 sub tickets {
