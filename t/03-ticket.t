@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 28;
+use Test::More tests => 56;
 use Test::Mock::LWP;
 
 use_ok('Net::Lighthouse::Project');
@@ -77,4 +77,21 @@ my %hash = (
 for my $k ( keys %hash ) {
     is( $n1->$k, $hash{$k}, "$k is loaded" );
 }
+
+$Mock_response->mock(
+    content => sub {
+        local $/;
+        open my $fh, '<', 't/data/tickets.xml' or die $!;
+        <$fh>;
+    }
+);
+
+my $ticket = Net::Lighthouse::Project::Ticket->new(
+    account    => 'sunnavy',
+    project_id => 35918,
+);
+my @list = $ticket->list;
+is( scalar @list, 2, 'list number' );
+is( $list[0]->number, 2, '1st ticket number' );
+is( $list[1]->number, 1, '1st ticket number' );
 
