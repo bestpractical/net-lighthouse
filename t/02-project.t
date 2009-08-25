@@ -17,7 +17,7 @@ for my $attr( qw/archived created_at default_assigned_user_id
     can_ok( $project, $attr );
 }
 
-for my $method ( qw/load save tickets/ ) {
+for my $method ( qw/load update tickets/ ) {
     can_ok( $project, $method );
 }
 $project->account('sunnavy');
