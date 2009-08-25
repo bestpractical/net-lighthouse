@@ -74,6 +74,6 @@ $Mock_response->mock(
 my $p = Net::Lighthouse::Project->new( account => 'sunnavy' );
 my @projects = $p->list;
 is( scalar @projects, 2, 'number of projects' );
-is_deeply( @projects[0], $sd,
+is_deeply( $projects[0], $sd,
     'load and list should return the same info for one project' );
 
