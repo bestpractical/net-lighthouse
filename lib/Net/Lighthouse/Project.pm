@@ -42,17 +42,22 @@ sub load {
 
 sub load_from_xml {
     my $self = shift;
-    validate_pos( @_, { type => SCALAR, regex => qr/^<\?xml/ } );
+    validate_pos( @_, { type => SCALAR | HASHREF, regex => qr/^<\?xml|HASH/ } );
+    my $ref = $self->_translate_from_xml( shift );
 
-    my $content = shift;
-    my $ref = XMLin( $content );
-    return $self->_load_from_xml( $ref );
+    # dirty hack: some attrs are read-only, and Mouse doesn't support
+    # writer => '...'
+    for my $k ( keys %$ref ) {
+        $self->{$k} = $ref->{$k};
+    }
+    return $self;
 }
 
-sub _load_from_xml {
+sub _translate_from_xml {
     my $self = shift;
-    validate_pos( @_, { type => HASHREF } );
+    validate_pos( @_, { type => SCALAR | HASHREF, regex => qr/^<\?xml|HASH/ } );
     my $ref = shift;
+    $ref = XMLin( $ref ) unless ref $ref;
     %$ref = map { my $old = $_; s/-/_/g; $_ => $ref->{$old} } keys %$ref;
     for my $k ( keys %$ref ) {
         if ( ref $ref->{$k} eq 'HASH' ) {
@@ -70,13 +75,7 @@ sub _load_from_xml {
             }
         }
     }
-
-    # dirty hack: some attrs are read-only, and Mouse doesn't support
-    # writer => '...'
-    for my $k ( keys %$ref ) {
-        $self->{$k} = $ref->{$k};
-    }
-    return $self;
+    return $ref;
 }
 
 sub create {
@@ -195,7 +194,7 @@ sub list {
                 map { $_ => $self->$_ }
                   grep { $self->$_ } qw/account email password token/
             );
-            $p->_load_from_xml($_);
+            $p->load_from_xml($_);
         } @$ps;
     }
     else {
