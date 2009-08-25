@@ -24,7 +24,7 @@ has [qw/archived access license name public/] => (
 no Any::Moose;
 __PACKAGE__->meta->make_immutable;
 
-sub find {
+sub load {
     my $self = shift;
     validate_pos( @_, { type => SCALAR, regex => qr/^\d+$/ } );
     my $id = shift;
@@ -48,7 +48,12 @@ sub find {
                 }
             }
         }
-        return Net::Lighthouse::Project->new( %$ref );
+
+        # dirty hack: some attrs are read-only, and Mouse doesn't support
+        # writer => '...'  
+        for my $k ( keys %$ref ) {
+            $self->{$k} = $ref->{$k};
+        }
     }
     else {
         die "try to get $url failed: "

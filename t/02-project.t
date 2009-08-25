@@ -1,13 +1,11 @@
 use strict;
 use warnings;
 
-use Test::More tests => 45;
+use Test::More tests => 44;
 
 use_ok( 'Net::Lighthouse::Project' );
+can_ok( 'Net::Lighthouse::Project', 'new' );
 
-for my $class_method ( qw/new find/ ) {
-    can_ok( 'Net::Lighthouse::Project', $class_method );
-}
 my $project = Net::Lighthouse::Project->new;
 isa_ok( $project, 'Net::Lighthouse::Project' );
 isa_ok( $project, 'Net::Lighthouse' );
@@ -19,7 +17,7 @@ for my $attr( qw/archived created_at default_assigned_user_id
     can_ok( $project, $attr );
 }
 
-for my $method ( qw/find save tickets/ ) {
+for my $method ( qw/load save tickets/ ) {
     can_ok( $project, $method );
 }
 $project->account('sunnavy');
@@ -32,8 +30,8 @@ $Mock_response->mock(
         <$fh>
     }
 );
-
-my $sd = Net::Lighthouse::Project->find(35918);
+my $sd = Net::Lighthouse::Project->new( account => 'sunnavy' );
+$sd->load( 35918 );
 my %hash = (
     'description_html' => '<div><p>test for sd</p></div>',
     'open_states_list' => 'new,open',
