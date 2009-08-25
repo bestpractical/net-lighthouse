@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 44;
+use Test::More tests => 46;
 
 use_ok( 'Net::Lighthouse::Project' );
 can_ok( 'Net::Lighthouse::Project', 'new' );
@@ -17,7 +17,7 @@ for my $attr( qw/archived created_at default_assigned_user_id
     can_ok( $project, $attr );
 }
 
-for my $method ( qw/load update tickets/ ) {
+for my $method ( qw/create update delete tickets load_from_xml/ ) {
     can_ok( $project, $method );
 }
 $project->account('sunnavy');
