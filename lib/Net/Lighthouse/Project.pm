@@ -1,5 +1,6 @@
 package Net::Lighthouse::Project;
 use Any::Moose;
+use XML::Simple;
 use Params::Validate ':all';
 extends 'Net::Lighthouse';
 # read only attr
@@ -30,31 +31,86 @@ sub load {
     my $url = $self->base_url . '/projects/' . $id . '.xml';
     my $res = $ua->get( $url );
     if ( $res->is_success ) {
-        use XML::Simple;
-        my $ref = XMLin( $res->content );
-        %$ref = map { my $old = $_; s/-/_/g; $_ => $ref->{$old} } keys %$ref;
-        for my $k ( keys %$ref ) {
-            if ( ref $ref->{$k} eq 'HASH' ) {
-                if ( $ref->{$k}{nil} && $ref->{$k}{nil} eq 'true' ) {
-                    $ref->{$k} = undef;
-                }
-                elsif ( defined $ref->{$k}{content} ) {
-                    $ref->{$k} = $ref->{$k}{content};
-                }
-                else {
-                    warn 'no idea how to handle ' . $ref->{$k};
-                }
-            }
-        }
-
-        # dirty hack: some attrs are read-only, and Mouse doesn't support
-        # writer => '...'  
-        for my $k ( keys %$ref ) {
-            $self->{$k} = $ref->{$k};
-        }
+        $self->load_from_xml( $res->content );
+        return 1;
     }
     else {
         die "try to get $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+}
+
+sub load_from_xml {
+    my $self = shift;
+    validate_pos( @_, { type => SCALAR, regex => qr/^<\?xml/ } );
+
+    my $content = shift;
+    my $ref = XMLin( $content );
+    %$ref = map { my $old = $_; s/-/_/g; $_ => $ref->{$old} } keys %$ref;
+    for my $k ( keys %$ref ) {
+        if ( ref $ref->{$k} eq 'HASH' ) {
+            if ( $ref->{$k}{nil} && $ref->{$k}{nil} eq 'true' ) {
+                $ref->{$k} = undef;
+            }
+            elsif ( defined $ref->{$k}{content} ) {
+                $ref->{$k} = $ref->{$k}{content};
+            }
+            elsif ( keys %{$ref->{$k}} == 0 ) {
+                $ref->{$k} = '';
+            }
+            else {
+                warn 'no idea how to handle ' . $ref->{$k};
+            }
+        }
+    }
+
+    # dirty hack: some attrs are read-only, and Mouse doesn't support
+    # writer => '...'
+    for my $k ( keys %$ref ) {
+        $self->{$k} = $ref->{$k};
+    }
+}
+
+sub create {
+    my $self = shift;
+    validate(
+        @_,
+        {
+            archived => { optional => 1, type => BOOLEAN },
+            name     => { optional => 1, type => SCALAR },
+            public   => { optional => 1, type => BOOLEAN },
+        }
+    );
+    my %args = @_;
+
+    if ( defined $args{name} ) {
+        $args{name} = { content => $args{name} };
+    }
+
+    for my $bool (qw/archived public/) {
+        next unless exists $args{$bool};
+        if ( $args{$bool} ) {
+            $args{$bool} = { content => 'true', type => 'boolean' };
+        }
+        else {
+            $args{$bool} = { content => 'false', type => 'boolean' };
+        }
+    }
+
+    my $xml = XMLout( { project => \%args }, KeepRoot => 1);
+    my $ua = $self->ua;
+
+    my $url = $self->base_url . '/projects.xml';
+
+    my $request = HTTP::Request->new( 'POST', $url, undef, $xml );
+    my $res = $ua->request( $request );
+    if ( $res->is_success ) {
+        $self->load_from_xml( $res->content );
+        return 1;
+    }
+    else {
+        die "try to POST $url failed: "
           . $res->status_line . "\n"
           . $res->content;
     }
@@ -98,6 +154,23 @@ sub update {
     }
     else {
         die "try to PUT $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+}
+
+sub delete {
+    my $self = shift;
+    my $ua = $self->ua;
+    my $url = $self->base_url . '/projects/' . $self->id . '.xml';
+
+    my $request = HTTP::Request->new( 'DELETE', $url );
+    my $res = $ua->request( $request );
+    if ( $res->is_success ) {
+        return 1;
+    }
+    else {
+        die "try to DELETE $url failed: "
           . $res->status_line . "\n"
           . $res->content;
     }
