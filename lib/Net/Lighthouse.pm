@@ -21,7 +21,7 @@ sub base_url {
 sub ua {
     my $self = shift;
     my $ua = LWP::UserAgent->new( agent => 'net-lighthouse/' . $VERSION );
-
+    $ua->default_header( 'Content-Type' => 'application/xml' );
     # email and password have high priority
     if ( $self->email && $self->password ) {
         my $base64 = encode_base64( $self->email . ':' . $self->password );
