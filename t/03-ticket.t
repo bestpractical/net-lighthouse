@@ -31,3 +31,50 @@ for my $attr (@attrs) {
     can_ok( $ticket, $attr );
 }
 
+$Mock_ua->mock( get            => sub { $Mock_response } );
+$Mock_ua->mock( default_header => sub { } );                  # to erase warning
+$Mock_response->mock(
+    content => sub {
+        local $/;
+        open my $fh, '<', 't/data/ticket_1.xml' or die $!;
+        <$fh>;
+    }
+);
+
+my $n1 = Net::Lighthouse::Project::Ticket->new(
+    account    => 'sunnavy',
+    project_id => 35918,
+);
+my $load = $n1->load(1);
+is( $load, $n1, 'load return $self' );
+
+my %hash = (
+    'priority'          => '1',
+    'number'            => '1',
+    'state'             => 'new',
+    'permalink'         => 'first-ticket',
+    'milestone_id'      => undef,
+    'created_at'        => '2009-08-21T11:15:50Z',
+    'assigned_user_id'  => '67166',
+    'attachments_count' => '1',
+    'url'        => 'http://sunnavy.lighthouseapp.com/projects/35918/tickets/1',
+    'tag'        => 'first',
+    'creator_id' => '67166',
+    'project_id' => '35918',
+    'creator_name'       => 'sunnavy (at gmail)',
+    'closed'             => 'false',
+    'latest_body'        => 'this\'s 1st description',
+    'account'            => 'sunnavy',
+    'raw_data'           => undef,
+    'milestone_due_on'   => undef,
+    'user_name'          => 'sunnavy (at gmail)',
+    'updated_at'         => '2009-08-21T11:15:53Z',
+    'user_id'            => '67166',
+    'assigned_user_name' => 'sunnavy (at gmail)',
+    'title'              => 'first ticket'
+);
+
+for my $k ( keys %hash ) {
+    is( $n1->$k, $hash{$k}, "$k is loaded" );
+}
+
