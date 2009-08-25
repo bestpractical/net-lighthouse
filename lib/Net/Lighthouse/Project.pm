@@ -62,6 +62,45 @@ sub load {
 
 sub update {
     my $self = shift;
+    validate(
+        @_,
+        {
+            archived => { optional => 1, type => BOOLEAN },
+            name     => { optional => 1, type => SCALAR },
+            public   => { optional => 1, type => BOOLEAN },
+        }
+    );
+    my %args = @_;
+
+    if ( defined $args{name} ) {
+        $args{name} = { content => $args{name} };
+    }
+
+    for my $bool (qw/archived public/) {
+        next unless exists $args{$bool};
+        if ( $args{$bool} ) {
+            $args{$bool} = { content => 'true', type => 'boolean' };
+        }
+        else {
+            $args{$bool} = { content => 'false', type => 'boolean' };
+        }
+    }
+
+    my $xml = XMLout( { project => \%args }, KeepRoot => 1);
+    my $ua = $self->ua;
+    my $url = $self->base_url . '/projects/' . $self->id . '.xml';
+
+    my $request = HTTP::Request->new( 'PUT', $url, undef, $xml );
+    my $res = $ua->request( $request );
+    if ( $res->is_success ) {
+        $self->load( $self->id ); # let's reload
+        return 1;
+    }
+    else {
+        die "try to PUT $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
 }
 
 sub tickets {
