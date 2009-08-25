@@ -1,7 +1,8 @@
 use strict;
 use warnings;
 
-use Test::More tests => 47;
+use Test::More tests => 50;
+use Test::Mock::LWP;
 
 use_ok( 'Net::Lighthouse::Project' );
 can_ok( 'Net::Lighthouse::Project', 'new' );
@@ -17,11 +18,11 @@ for my $attr( qw/archived created_at default_assigned_user_id
     can_ok( $project, $attr );
 }
 
-for my $method ( qw/create update delete tickets load load_from_xml/ ) {
+for my $method ( qw/create update delete tickets load load_from_xml list/ ) {
     can_ok( $project, $method );
 }
 $project->account('sunnavy');
-use Test::Mock::LWP;
+
 $Mock_ua->mock( get => sub { $Mock_response } );
 $Mock_ua->mock( default_header => sub { } ); # to erase warning
 $Mock_response->mock(
@@ -31,6 +32,7 @@ $Mock_response->mock(
         <$fh>
     }
 );
+
 my $sd = Net::Lighthouse::Project->new( account => 'sunnavy' );
 $sd->load( 35918 );
 my %hash = (
@@ -60,3 +62,18 @@ invalid/A30  # \'A30\' expands to \'AA3300\'',
 for my $k ( keys %hash ) {
     is( $sd->$k, $hash{$k}, "$k is loaded" );
 }
+
+$Mock_response->mock(
+    content => sub {
+        local $/;
+        open my $fh, '<', 't/data/projects.xml' or die $!;
+        <$fh>
+    }
+);
+
+my $p = Net::Lighthouse::Project->new( account => 'sunnavy' );
+my @projects = $p->list;
+is( scalar @projects, 2, 'number of projects' );
+is_deeply( @projects[0], $sd,
+    'load and list should return the same info for one project' );
+
