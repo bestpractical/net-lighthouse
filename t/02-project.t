@@ -23,6 +23,7 @@ for my $method ( qw/create update delete tickets load load_from_xml/ ) {
 $project->account('sunnavy');
 use Test::Mock::LWP;
 $Mock_ua->mock( get => sub { $Mock_response } );
+$Mock_ua->mock( default_header => sub { } ); # to erase warning
 $Mock_response->mock(
     content => sub {
         local $/;
