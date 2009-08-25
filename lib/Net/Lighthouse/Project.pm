@@ -42,7 +42,8 @@ sub load {
 
 sub load_from_xml {
     my $self = shift;
-    validate_pos( @_, { type => SCALAR | HASHREF, regex => qr/^<\?xml|HASH/ } );
+    validate_pos( @_,
+        { type => SCALAR | HASHREF, regex => qr/^<\?xml|^HASH\(\w+\)$/ } );
     my $ref = $self->_translate_from_xml( shift );
 
     # dirty hack: some attrs are read-only, and Mouse doesn't support
@@ -55,7 +56,8 @@ sub load_from_xml {
 
 sub _translate_from_xml {
     my $self = shift;
-    validate_pos( @_, { type => SCALAR | HASHREF, regex => qr/^<\?xml|HASH/ } );
+    validate_pos( @_,
+        { type => SCALAR | HASHREF, regex => qr/^<\?xml|^HASH\(\w+\)$/ } );
     my $ref = shift;
     $ref = XMLin( $ref ) unless ref $ref;
     %$ref = map { my $old = $_; s/-/_/g; $_ => $ref->{$old} } keys %$ref;
