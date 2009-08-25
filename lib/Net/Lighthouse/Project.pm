@@ -5,7 +5,7 @@ extends 'Net::Lighthouse';
 # read only attr
 has [
     qw/created_at default_assigned_user_id default_milestone_id description
-      description_html hidden id open_ticket_count permalink
+      description_html hidden id open_tickets_count permalink
       send_changesets_to_events updated_at open_states_list closed_states_list
       open_states closed_states/
   ] => (
