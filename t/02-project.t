@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 50;
+use Test::More tests => 53;
 use Test::Mock::LWP;
 
 use_ok( 'Net::Lighthouse::Project' );
@@ -76,6 +76,8 @@ $Mock_response->mock(
 my $p = Net::Lighthouse::Project->new( account => 'sunnavy' );
 my @projects = $p->list;
 is( scalar @projects, 2, 'number of projects' );
+is( $projects[0]->id, 35918, 'id of 2nd project' );
+is( $projects[1]->id, 36513, 'id of 2nd project' );
 is_deeply( $projects[0], $sd,
     'load and list should return the same info for one project' );
 
