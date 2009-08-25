@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 56;
+use Test::More tests => 57;
 use Test::Mock::LWP;
 
 use_ok('Net::Lighthouse::Project');
@@ -86,7 +86,7 @@ $Mock_response->mock(
     }
 );
 
-my $ticket = Net::Lighthouse::Project::Ticket->new(
+$ticket = Net::Lighthouse::Project::Ticket->new(
     account    => 'sunnavy',
     project_id => 35918,
 );
@@ -95,3 +95,37 @@ is( scalar @list, 2, 'list number' );
 is( $list[0]->number, 2, '1st ticket number' );
 is( $list[1]->number, 1, '1st ticket number' );
 
+# test initial_state
+$Mock_response->mock(
+    content => sub {
+        local $/;
+        open my $fh, '<', 't/data/ticket_new.xml' or die $!;
+        <$fh>;
+    }
+);
+$ticket = Net::Lighthouse::Project::Ticket->new(
+    account    => 'sunnavy',
+    project_id => 35918,
+);
+my $expect_initial_state = {
+    'priority'          => '0',
+    'number'            => undef,
+    'milestone_id'      => undef,
+    'permalink'         => undef,
+    'state'             => undef,
+    'assigned_user_id'  => undef,
+    'attachments_count' => '0',
+    'created_at'        => undef,
+    'url'         => 'http://sunnavy.lighthouseapp.com/projects/35918/tickets/',
+    'tag'         => undef,
+    'creator_id'  => undef,
+    'project_id'  => '35918',
+    'closed'      => 'false',
+    'latest_body' => undef,
+    'raw_data'    => undef,
+    'milestone_due_on' => undef,
+    'updated_at'       => undef,
+    'title'            => undef,
+    'user_id'          => undef
+};
+is_deeply( $ticket->initial_state, $expect_initial_state, 'initial state' );
