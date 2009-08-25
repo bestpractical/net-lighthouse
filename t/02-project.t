@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 54;
+use Test::More tests => 55;
 use Test::Mock::LWP;
 
 use_ok( 'Net::Lighthouse::Project' );
@@ -18,9 +18,14 @@ for my $attr( qw/archived created_at default_assigned_user_id
     can_ok( $project, $attr );
 }
 
-for my $method ( qw/create update delete tickets load load_from_xml list/ ) {
+for my $method (
+    qw/create update delete tickets load load_from_xml list
+    initial_state/
+  )
+{
     can_ok( $project, $method );
 }
+
 $project->account('sunnavy');
 
 $Mock_ua->mock( get => sub { $Mock_response } );
