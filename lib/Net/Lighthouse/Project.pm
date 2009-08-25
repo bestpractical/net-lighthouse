@@ -205,6 +205,21 @@ sub list {
 
 }
 
+sub initial_state {
+    my $self = shift;
+    my $ua = $self->ua;
+    my $url = $self->base_url . '/projects/new.xml';
+    my $res = $ua->get( $url );
+    if ( $res->is_success ) {
+        return $self->_translate_from_xml( $res->content );
+    }
+    else {
+        die "try to get $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+}
+
 sub tickets {
     my $self = shift;
 }
