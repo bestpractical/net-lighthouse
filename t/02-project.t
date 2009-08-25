@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 53;
+use Test::More tests => 54;
 use Test::Mock::LWP;
 
 use_ok( 'Net::Lighthouse::Project' );
@@ -81,3 +81,37 @@ is( $projects[1]->id, 36513, 'id of 2nd project' );
 is_deeply( $projects[0], $sd,
     'load and list should return the same info for one project' );
 
+# test for initial_state
+$Mock_response->mock(
+    content => sub {
+        local $/;
+        open my $fh, '<', 't/data/project_new.xml' or die $!;
+        <$fh>
+    }
+);
+my $initial_state = $p->initial_state;
+my $expected_initial_state = {
+    'description_html' => undef,
+    'open_states_list' => 'new,open',
+    'open_states'      => 'new/f17  # You can add comments here
+open/aaa # if you want to.',
+    'permalink'                 => undef,
+    'default_assigned_user_id'  => undef,
+    'default_milestone_id'      => undef,
+    'created_at'                => undef,
+    'send_changesets_to_events' => 'true',
+    'public'                    => 'false',
+    'open_tickets_count'        => '0',
+    'closed_states'             => 'resolved/6A0 # You can customize colors
+hold/EB0     # with 3 or 6 character hex codes
+invalid/A30  # \'A30\' expands to \'AA3300\'',
+    'name'               => undef,
+    'license'            => undef,
+    'description'        => undef,
+    'archived'           => 'false',
+    'updated_at'         => undef,
+    'closed_states_list' => 'resolved,hold,invalid',
+    'hidden'             => 'false'
+};
+
+is_deeply( $initial_state, $expected_initial_state, 'initial state' );
