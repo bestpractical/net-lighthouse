@@ -7,16 +7,14 @@ has [
     qw/created_at default_assigned_user_id default_milestone_id description
       description_html hidden id open_tickets_count permalink
       send_changesets_to_events updated_at open_states_list closed_states_list
-      open_states closed_states/
+      open_states closed_states access license/
   ] => (
     isa => 'Maybe[Str]',
     is  => 'ro',
   );
 
 # read&write attr
-# TODO access and license are not writable in official document,
-# but the official ruby api are. let's make them writable for now
-has [qw/archived access license name public/] => (
+has [qw/archived name public/] => (
     isa => 'Maybe[Str]',
     is  => 'rw',
 );
@@ -62,7 +60,7 @@ sub load {
     }
 }
 
-sub save {
+sub update {
     my $self = shift;
 }
 
