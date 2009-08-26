@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 10;
+use Test::More tests => 16;
 use Test::Mock::LWP;
 
 use_ok( 'Net::Lighthouse::User' );
@@ -13,5 +13,34 @@ isa_ok( $user, 'Net::Lighthouse' );
 
 for my $attr( qw/id name job name website avatar_url/ ) {
     can_ok( $user, $attr );
+}
+
+$Mock_ua->mock( get => sub { $Mock_response } );
+$Mock_ua->mock( default_header => sub { } ); # to erase warning
+$Mock_response->mock(
+    content => sub {
+        local $/;
+        open my $fh, '<', 't/data/user_67166.xml' or die $!;
+        <$fh>
+    }
+);
+
+$user->account('sunnavy');
+my $sunnavy = $user->load( 67166 );
+is( $sunnavy, $user, 'load return $self' );
+for ( qw/name id job website avatar_url/ ) {
+
+}
+
+my %hash = (
+    'website'    => undef,
+    'avatar_url' => '/images/avatar.gif',
+    'name'       => 'sunnavy (at gmail)',
+    'id'         => '67166',
+    'job'        => ''
+);
+
+for my $attr ( keys %hash ) {
+    is( $user->$attr, $hash{$attr}, "$attr is loaded" );
 }
 
