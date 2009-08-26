@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 16;
+use Test::More tests => 20;
 use Test::Mock::LWP;
 
 use_ok( 'Net::Lighthouse::User' );
@@ -13,6 +13,10 @@ isa_ok( $user, 'Net::Lighthouse' );
 
 for my $attr( qw/id name job name website avatar_url/ ) {
     can_ok( $user, $attr );
+}
+
+for my $method ( qw/load load_from_xml update memberships/ ) {
+    can_ok( $user, $method );
 }
 
 $Mock_ua->mock( get => sub { $Mock_response } );
