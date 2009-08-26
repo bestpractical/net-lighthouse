@@ -60,7 +60,7 @@ sub _translate_from_xml {
         { type => SCALAR | HASHREF, regex => qr/^<\?xml|^HASH\(\w+\)$/ } );
     my $ref = shift;
     $ref = XMLin( $ref ) unless ref $ref;
-    %$ref = map { my $old = $_; s/-/_/g; $_ => $ref->{$old} } keys %$ref;
+    %$ref = map { my $new = $_; $new =~ s/-/_/g; $new => $ref->{$_} } keys %$ref;
     for my $k ( keys %$ref ) {
         if ( ref $ref->{$k} eq 'HASH' ) {
             if ( $ref->{$k}{nil} && $ref->{$k}{nil} eq 'true' ) {
