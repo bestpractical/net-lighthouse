@@ -2,7 +2,6 @@ use strict;
 use warnings;
 
 use Test::More tests => 12;
-use Test::Mock::LWP;
 
 use_ok( 'Net::Lighthouse::User::Membership' );
 can_ok( 'Net::Lighthouse::User::Membership', 'new' );
