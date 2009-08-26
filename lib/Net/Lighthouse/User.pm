@@ -114,6 +114,10 @@ sub update {
     }
 }
 
+sub memberships {
+    my $self = shift;
+}
+
 1;
 
 __END__
