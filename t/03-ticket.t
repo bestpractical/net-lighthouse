@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 64;
+use Test::More tests => 70;
 use Test::Mock::LWP;
 
 use_ok('Net::Lighthouse::Project');
@@ -82,6 +82,13 @@ my %hash = (
 for my $k ( keys %hash ) {
     is( $n1->$k, $hash{$k}, "$k is loaded" );
 }
+
+is( @{$n1->versions}, 1, 'version number' );
+isa_ok( $n1->versions->[0], 'Net::Lighthouse::Project::Ticket::Version' );
+is( $n1->versions->[0]->creator_id, 67166, 'version creator_id' );
+is( @{$n1->attachments}, 1, 'attachment number' );
+isa_ok( $n1->attachments->[0], 'Net::Lighthouse::Project::Ticket::Attachment' );
+is( $n1->attachments->[0]->filename, 'first', 'attachment filename' );
 
 $Mock_response->mock(
     content => sub {
