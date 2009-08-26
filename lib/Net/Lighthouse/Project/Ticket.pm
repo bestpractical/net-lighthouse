@@ -2,6 +2,7 @@ package Net::Lighthouse::Project::Ticket;
 use Any::Moose;
 use XML::Simple;
 use Params::Validate ':all';
+use Net::Lighthouse::Util;
 extends 'Net::Lighthouse';
 # read only attr
 has [
@@ -62,8 +63,6 @@ sub load {
 
 sub load_from_xml {
     my $self = shift;
-    validate_pos( @_,
-        { type => SCALAR | HASHREF, regex => qr/^<\?xml|^HASH\(\w+\)$/ } );
     my $ref = $self->_translate_from_xml( shift );
 
     # dirty hack: some attrs are read-only, and Mouse doesn't support
@@ -76,12 +75,7 @@ sub load_from_xml {
 
 sub _translate_from_xml {
     my $self = shift;
-    validate_pos( @_,
-        { type => SCALAR | HASHREF, regex => qr/^<\?xml|^HASH\(\w+\)$/ } );
-    my $ref = shift;
-    $ref = XMLin( $ref ) unless ref $ref;
-    %$ref = map { my $new = $_; $new =~ s/-/_/g; $new => $ref->{$_} } keys %$ref;
-
+    my $ref = Net::Lighthouse::Util->translate_from_xml( shift );
     for my $k ( keys %$ref ) {
         if ( $k eq 'versions' ) {
             my $versions = $ref->{versions}{version};
@@ -104,20 +98,6 @@ sub _translate_from_xml {
                     $v->load_from_xml($_)
                   } @$attachments
             ];
-        }
-        elsif ( ref $ref->{$k} eq 'HASH' ) {
-            if ( $ref->{$k}{nil} && $ref->{$k}{nil} eq 'true' ) {
-                $ref->{$k} = undef;
-            }
-            elsif ( defined $ref->{$k}{content} ) {
-                $ref->{$k} = $ref->{$k}{content};
-            }
-            elsif ( keys %{$ref->{$k}} == 0 ) {
-                $ref->{$k} = '';
-            }
-            else {
-                warn 'no idea how to handle ' . $ref->{$k};
-            }
         }
     }
     return $ref;
