@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 55;
+use Test::More tests => 58;
 use Test::Mock::LWP;
 
 use_ok( 'Net::Lighthouse::Project' );
