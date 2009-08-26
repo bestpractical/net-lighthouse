@@ -6,8 +6,8 @@ use Test::More tests => 27;
 use_ok('Net::Lighthouse::Project::Ticket::Attachment');
 can_ok( 'Net::Lighthouse::Project::Ticket::Attachment', 'new' );
 
-my $version = Net::Lighthouse::Project::Ticket::Attachment->new;
-isa_ok( $version, 'Net::Lighthouse::Project::Ticket::Attachment' );
+my $attachment = Net::Lighthouse::Project::Ticket::Attachment->new;
+isa_ok( $attachment, 'Net::Lighthouse::Project::Ticket::Attachment' );
 
 my @attrs = (
     'width',        'created_at',  'height',   'size',
@@ -16,18 +16,18 @@ my @attrs = (
 );
 
 for my $attr (@attrs) {
-    can_ok( $version, $attr );
+    can_ok( $attachment, $attr );
 }
 
-can_ok( $version, 'load_from_xml' );
+can_ok( $attachment, 'load_from_xml' );
 
 my $xml = do {
     local $/;
     open my $fh, '<', 't/data/ticket_1_attachment_1.xml' or die $!;
     <$fh>;
 };
-my $v1 = $version->load_from_xml($xml);
-is( $v1, $version, 'load return $self' );
+my $v1 = $attachment->load_from_xml($xml);
+is( $v1, $attachment, 'load return $self' );
 my %hash = (
     'width'        => undef,
     'uploader_id'  => '67166',
