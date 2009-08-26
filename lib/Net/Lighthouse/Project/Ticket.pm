@@ -100,6 +100,121 @@ sub _translate_from_xml {
     return $ref;
 }
 
+sub create {
+    my $self = shift;
+    validate(
+        @_,
+        {
+            title => { type     => SCALAR },
+            body  => { type     => SCALAR },
+            state => { optional => 1, type => SCALAR },
+            assigned_user_id => {
+                optional => 1,
+                type     => SCALAR,
+                regex    => qr/^\d+$/,
+            },
+            milestone_id => {
+                optional => 1,
+                type     => SCALAR,
+                regex    => qr/^\d+$/,
+            },
+            tag => { optional => 1, type => SCALAR },
+        }
+    );
+    my %args = @_;
+
+    for my $field (qw/title body state assigned_user_id milestone_id tag/) {
+        next unless exists $args{$field};
+        $args{$field} = { content => $args{$field} };
+    }
+
+    my $xml = XMLout( { ticket => \%args }, KeepRoot => 1);
+    my $ua = $self->ua;
+
+    my $url = $self->base_url . '/projects/' . $self->project_id . '/tickets.xml';
+
+    my $request = HTTP::Request->new( 'POST', $url, undef, $xml );
+    my $res = $ua->request( $request );
+    if ( $res->is_success ) {
+        $self->load_from_xml( $res->content );
+        return 1;
+    }
+    else {
+        die "try to POST $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+}
+
+sub update {
+    my $self = shift;
+    validate(
+        @_,
+        {
+            title => { optional => 1, type     => SCALAR },
+            body  => { optional => 1, type     => SCALAR },
+            state => { optional => 1, type => SCALAR },
+            assigned_user_id => {
+                optional => 1,
+                type     => SCALAR,
+                regex    => qr/^\d+$/,
+            },
+            milestone_id => {
+                optional => 1,
+                type     => SCALAR,
+                regex    => qr/^\d+$/,
+            },
+            tag => { optional => 1, type => SCALAR },
+        }
+    );
+    my %args = @_;
+
+    for my $field (qw/title body state assigned_user_id milestone_id tag/) {
+        next unless exists $args{$field};
+        $args{$field} = { content => $args{$field} };
+    }
+
+    my $xml = XMLout( { ticket => \%args }, KeepRoot => 1);
+    my $ua = $self->ua;
+    my $url =
+        $self->base_url
+      . '/projects/'
+      . $self->project_id . '/tickets/'
+      . $self->number . '.xml';
+
+    my $request = HTTP::Request->new( 'PUT', $url, undef, $xml );
+    my $res = $ua->request( $request );
+    if ( $res->is_success ) {
+        $self->load( $self->number ); # let's reload
+        return 1;
+    }
+    else {
+        die "try to PUT $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+}
+
+sub delete {
+    my $self = shift;
+    my $ua = $self->ua;
+    my $url =
+        $self->base_url
+      . '/projects/'
+      . $self->project_id . '/tickets/'
+      . $self->number . '.xml';
+
+    my $request = HTTP::Request->new( 'DELETE', $url );
+    my $res = $ua->request( $request );
+    if ( $res->is_success ) {
+        return 1;
+    }
+    else {
+        die "try to DELETE $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+}
 
 sub list {
     my $self = shift;
