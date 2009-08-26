@@ -37,7 +37,7 @@ sub load {
     my $url =
         $self->base_url
       . '/projects/'
-      . $self->project_id . '/'
+      . $self->project_id . '/tickets/'
       . $number . '.xml';
     my $res = $ua->get( $url );
     if ( $res->is_success ) {
@@ -128,7 +128,8 @@ sub list {
 sub initial_state {
     my $self = shift;
     my $ua = $self->ua;
-    my $url = $self->base_url . '/projects/' . $self->project_id . '/new.xml';
+    my $url =
+      $self->base_url . '/projects/' . $self->project_id . '/tickets/new.xml';
     my $res = $ua->get( $url );
     if ( $res->is_success ) {
         return $self->_translate_from_xml( $res->content );
