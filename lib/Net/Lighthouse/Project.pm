@@ -224,6 +224,12 @@ sub initial_state {
 
 sub tickets {
     my $self = shift;
+    require Net::Lighthouse::Project::Ticket;
+    my $ticket = Net::Lighthouse::Project::Ticket->new(
+        map { $_ => $self->$_ }
+          grep { $self->$_ } qw/account email password token/
+    );
+    return $ticket->list( @_ );
 }
 
 1;
