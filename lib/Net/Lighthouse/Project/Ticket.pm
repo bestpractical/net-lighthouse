@@ -101,6 +101,30 @@ sub _translate_from_xml {
 }
 
 
+sub list {
+    my $self = shift;
+    my $ua = $self->ua;
+    my $url =
+      $self->base_url . '/projects/' . $self->project_id . '/tickets.xml';
+    my $res = $ua->get( $url );
+    if ( $res->is_success ) {
+        my $ts = XMLin( $res->content, KeyAttr => [] )->{ticket};
+        return map {
+            my $t = Net::Lighthouse::Project::Ticket->new(
+                map { $_ => $self->$_ }
+                  grep { $self->$_ } qw/account email password token project_id/
+            );
+            $t->load_from_xml($_);
+        } @$ts;
+    }
+    else {
+        die "try to get $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+
+}
+
 sub initial_state {
     my $self = shift;
     my $ua = $self->ua;
