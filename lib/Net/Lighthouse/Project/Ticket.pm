@@ -241,10 +241,26 @@ sub delete {
 
 sub list {
     my $self = shift;
-    my $ua = $self->ua;
-    my $url =
-      $self->base_url . '/projects/' . $self->project_id . '/tickets.xml';
-    my $res = $ua->get( $url );
+    validate(
+        @_,
+        {
+            query => { optional => 1, type => SCALAR },
+            page  => { optional => 1, type => SCALAR, regex => qr/^\d+$/ },
+        }
+    );
+    my %args = @_;
+
+    my $url = $self->base_url . '/projects/tickets.xml?';
+    if ( $args{query} ) {
+        require URI::Escape;
+        $url .= 'q=' . URI::Escape::uri_escape( $args{query} ) . '&';
+    }
+    if ( $args{page} ) {
+        $url .= 'page=' . uri_escape( $args{page} );
+    }
+
+    my $ua  = $self->ua;
+    my $res = $ua->get($url);
     if ( $res->is_success ) {
         my $ts = XMLin( $res->content, KeyAttr => [] )->{ticket};
         return map {
