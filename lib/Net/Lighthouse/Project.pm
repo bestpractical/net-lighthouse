@@ -226,6 +226,7 @@ sub tickets {
     my $self = shift;
     require Net::Lighthouse::Project::Ticket;
     my $ticket = Net::Lighthouse::Project::Ticket->new(
+        project_id => $self->id,
         map { $_ => $self->$_ }
           grep { $self->$_ } qw/account email password token/
     );
