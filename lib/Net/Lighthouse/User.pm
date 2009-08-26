@@ -77,6 +77,42 @@ sub _translate_from_xml {
     return $ref;
 }
 
+sub update {
+    my $self = shift;
+    validate(
+        @_,
+        {
+            name    => { optional => 1, type => SCALAR },
+            job     => { optional => 1, type => SCALAR },
+            website => { optional => 1, type => SCALAR },
+        }
+    );
+    my %args = @_;
+
+    for my $field (qw/name job website/) {
+        next unless exists $args{$field};
+        $args{$field} = { content => $args{$field} };
+    }
+
+    my $xml = XMLout( { user => \%args }, KeepRoot => 1 );
+    my $ua  = $self->ua;
+    my $url = $self->base_url . '/users/' . $self->id . '.xml';
+
+    my $request = HTTP::Request->new( 'PUT', $url, undef, $xml );
+    my $res = $ua->request($request);
+
+    # the current server returns 302 moved temporarily even updated with
+    # success
+    if ( $res->is_success || $res->code == 302 ) {
+        $self->load( $self->id );    # let's reload
+        return 1;
+    }
+    else {
+        die "try to PUT $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+}
 
 1;
 
