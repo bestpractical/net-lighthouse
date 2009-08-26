@@ -6,7 +6,7 @@ use Test::Mock::LWP;
 
 use_ok('Net::Lighthouse::Project');
 use_ok('Net::Lighthouse::Project::Ticket');
-can_ok( 'Net::Lighthouse::Project', 'new' );
+can_ok( 'Net::Lighthouse::Project::Ticket', 'new' );
 
 my $ticket = Net::Lighthouse::Project::Ticket->new;
 isa_ok( $ticket, 'Net::Lighthouse::Project::Ticket' );
