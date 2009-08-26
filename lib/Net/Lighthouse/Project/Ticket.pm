@@ -250,7 +250,8 @@ sub list {
     );
     my %args = @_;
 
-    my $url = $self->base_url . '/projects/tickets.xml?';
+    my $url =
+      $self->base_url . '/projects/' . $self->project_id . '/tickets.xml?';
     if ( $args{query} ) {
         require URI::Escape;
         $url .= 'q=' . URI::Escape::uri_escape( $args{query} ) . '&';
