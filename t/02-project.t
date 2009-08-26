@@ -78,7 +78,7 @@ $Mock_response->mock(
     }
 );
 
-my $p = Net::Lighthouse::Project->new( account => 'sunnavy' );
+my $p = Net::Lighthouse::Project->new( account => 'sunnavy', id => 35918 );
 my @projects = $p->list;
 is( scalar @projects, 2, 'number of projects' );
 is( $projects[0]->id, 35918, 'id of 2nd project' );
