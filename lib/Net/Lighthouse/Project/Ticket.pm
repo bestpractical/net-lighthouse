@@ -11,7 +11,7 @@ has [
     'state',             'permalink',
     'versions',          'url',
     'updated_at',        'closed',
-    'attachments',       'latest_body',
+           'latest_body',
     'user_id',           'project_id',
     'attachments_count', 'creator_id',
     'creator_name',      'assigned_user_name',
@@ -19,6 +19,16 @@ has [
     isa => 'Maybe[Str]',
     is  => 'ro',
   );
+
+has 'attachments' => (
+    isa => 'ArrayRef[Net::Lighthouse::Project::Ticket::Attachment]',
+    is  => 'ro',
+);
+
+has 'versions' => (
+    isa => 'ArrayRef[Net::Lighthouse::Project::Ticket::Version]',
+    is  => 'ro',
+);
 
 # read&write attr
 has [qw/title state assigned_user_id milestone_id tag/] => (
@@ -71,18 +81,31 @@ sub _translate_from_xml {
     my $ref = shift;
     $ref = XMLin( $ref ) unless ref $ref;
     %$ref = map { my $new = $_; $new =~ s/-/_/g; $new => $ref->{$_} } keys %$ref;
-    if ( $ref->{versions} ) {
-        # TODO: need Ticket::Version object
-        delete $ref->{versions};
-    }
-
-    if ( $ref->{attachments} ) {
-        # TODO: need Ticket::Attachment object
-        delete $ref->{attachments};
-    }
 
     for my $k ( keys %$ref ) {
-        if ( ref $ref->{$k} eq 'HASH' ) {
+        if ( $k eq 'versions' ) {
+            my $versions = $ref->{versions}{version};
+            $versions = [ $versions ] unless ref $versions eq 'ARRAY';
+            require Net::Lighthouse::Project::Ticket::Version;
+            $ref->{versions} = [
+                map {
+                    my $v = Net::Lighthouse::Project::Ticket::Version->new;
+                    $v->load_from_xml($_)
+                  } @$versions
+            ];
+        }
+        elsif ( $k eq 'attachments' ) {
+            my $attachments = $ref->{attachments}{attachment};
+            $attachments = [ $attachments ] unless ref $attachments eq 'ARRAY';
+            require Net::Lighthouse::Project::Ticket::Attachment;
+            $ref->{attachments} = [
+                map {
+                    my $v = Net::Lighthouse::Project::Ticket::Attachment->new;
+                    $v->load_from_xml($_)
+                  } @$attachments
+            ];
+        }
+        elsif ( ref $ref->{$k} eq 'HASH' ) {
             if ( $ref->{$k}{nil} && $ref->{$k}{nil} eq 'true' ) {
                 $ref->{$k} = undef;
             }
