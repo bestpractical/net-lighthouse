@@ -94,6 +94,7 @@ $Mock_response->mock(
         <$fh>
     }
 );
+
 my $initial_state = $p->initial_state;
 my $expected_initial_state = {
     'description_html' => undef,
@@ -120,3 +121,19 @@ invalid/A30  # \'A30\' expands to \'AA3300\'',
 };
 
 is_deeply( $initial_state, $expected_initial_state, 'initial state' );
+
+
+# test tickets
+$Mock_response->mock(
+    content => sub {
+        local $/;
+        open my $fh, '<', 't/data/tickets.xml' or die $!;
+        <$fh>
+    }
+);
+
+my @tickets = $p->tickets;
+is( scalar @tickets, 2, 'found tickets' );
+isa_ok( $tickets[0], 'Net::Lighthouse::Project::Ticket', 'found tickets' );
+is( $tickets[0]->number, 2, 'ticket number' );
+
