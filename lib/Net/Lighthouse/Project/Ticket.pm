@@ -244,6 +244,7 @@ sub list {
     my $res = $ua->get($url);
     if ( $res->is_success ) {
         my $ts = XMLin( $res->content, KeyAttr => [] )->{ticket};
+        $ts = [ $ts ] unless ref $ts eq 'ARRAY';
         return map {
             my $t = Net::Lighthouse::Project::Ticket->new(
                 map { $_ => $self->$_ }

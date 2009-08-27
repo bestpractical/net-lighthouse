@@ -164,6 +164,7 @@ sub list {
     my $res = $ua->get( $url );
     if ( $res->is_success ) {
         my $ps = XMLin( $res->content, KeyAttr => [] )->{project};
+        $ps = [ $ps ] unless ref $ps eq 'ARRAY';
         return map {
             my $p = Net::Lighthouse::Project->new(
                 map { $_ => $self->$_ }
