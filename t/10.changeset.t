@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 13;
+use Test::More tests => 32;
 use Test::Mock::LWP;
 
 use_ok('Net::Lighthouse::Project');
@@ -21,3 +21,89 @@ for my $attr (@attrs) {
     can_ok( $changeset, $attr );
 }
 
+for my $method (qw/create delete load load_from_xml list initial_state/)
+{
+    can_ok( $changeset, $method );
+}
+
+$Mock_ua->mock( get            => sub { $Mock_response } );
+$Mock_ua->mock( default_header => sub { } );                  # to erase warning
+$Mock_response->mock(
+    content => sub {
+        local $/;
+        open my $fh, '<', 't/data/changeset_983.xml' or die $!;
+        <$fh>;
+    }
+);
+
+my $n1 = Net::Lighthouse::Project::Changeset->new(
+    account    => 'sunnavy',
+    project_id => 2,
+);
+my $load = $n1->load(1);
+is( $load, $n1, 'load return $self' );
+my %hash = (
+                 'account' => 'sunnavy',
+                 'body' => '#{unprocessed body}',
+                 'revision' => '983',
+                 'changes' => '--- 
+  - - M
+    - /trunk/test/unit/changeset_test.rb
+  - - M
+    - /trunk/app/models/changeset.rb
+  - - M
+    - /trunk/db/schema.rb
+
+  ',
+                 'user_id' => '1',
+                 'title' => 'rick committed changeset [983]',
+                 'body_html' => '#{processed HTML body}',
+                 'changed_at' => '2007-03-21T21:45:23Z',
+                 'project_id' => '2'
+);
+
+for my $k ( keys %hash ) {
+    is( $n1->$k, $hash{$k}, "$k is loaded" );
+}
+
+$Mock_response->mock(
+    content => sub {
+        local $/;
+        open my $fh, '<', 't/data/changesets.xml' or die $!;
+        <$fh>;
+    }
+);
+
+$changeset = Net::Lighthouse::Project::Changeset->new(
+    account    => 'sunnavy',
+    project_id => 2,
+);
+my @list = $changeset->list;
+is( scalar @list, 1, 'list number' );
+is( $list[0]->revision, 983, '1st changeset number' );
+
+# test initial_state
+$Mock_response->mock(
+    content => sub {
+        local $/;
+        open my $fh, '<', 't/data/changeset_new.xml' or die $!;
+        <$fh>;
+    }
+);
+$changeset = Net::Lighthouse::Project::Changeset->new(
+    account    => 'sunnavy',
+    project_id => 2,
+);
+my $expect_initial_state = {
+    'body'     => '',
+    'revision' => '',
+    'changes'  => '--- []
+
+',
+    'user_id'    => '',
+    'title'      => '',
+    'body_html'  => '',
+    'changed_at' => '',
+    'project_id' => '2'
+};
+is_deeply( $changeset->initial_state, $expect_initial_state, 'initial state' );
