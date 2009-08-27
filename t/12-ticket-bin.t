@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 15;
+use Test::More tests => 35;
 use Test::Mock::LWP;
 
 use_ok('Net::Lighthouse::Project');
@@ -21,4 +21,58 @@ my @attrs = (
 for my $attr (@attrs) {
     can_ok( $bin, $attr );
 }
+
+for my $method (qw/create update delete load load_from_xml list/) {
+    can_ok( $bin, $method );
+}
+
+$Mock_ua->mock( get            => sub { $Mock_response } );
+$Mock_ua->mock( default_header => sub { } );                  # to erase warning
+$Mock_response->mock(
+    content => sub {
+        local $/;
+        open my $fh, '<', 't/data/bin_48889.xml' or die $!;
+        <$fh>;
+    }
+);
+
+my $b1 = Net::Lighthouse::Project::TicketBin->new(
+    account    => 'sunnavy',
+    project_id => 35918,
+);
+my $load = $b1->load(48889);
+is( $load, $b1, 'load return $self' );
+my %hash = (
+    'query'         => 'state:open',
+    'account'       => 'sunnavy',
+    'position'      => '1',
+    'name'          => 'Open tickets',
+    'default'       => undef,
+    'shared'        => 'true',
+    'updated_at'    => '2009-08-21T10:02:21Z',
+    'tickets_count' => '2',
+    'user_id'       => '67166',
+    'id'            => '48889',
+    'project_id'    => '35918',
+);
+
+for my $k ( keys %hash ) {
+    is( $b1->$k, $hash{$k}, "$k is loaded" );
+}
+
+$Mock_response->mock(
+    content => sub {
+        local $/;
+        open my $fh, '<', 't/data/bins.xml' or die $!;
+        <$fh>;
+    }
+);
+
+$bin = Net::Lighthouse::Project::TicketBin->new(
+    account    => 'sunnavy',
+    project_id => 35918,
+);
+my @list = $bin->list;
+is( scalar @list, 3, 'list number' );
+is( $list[0]->id, 48889, '1st bin number' );
 
