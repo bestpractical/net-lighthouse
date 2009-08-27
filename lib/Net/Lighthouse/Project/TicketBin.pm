@@ -4,6 +4,7 @@ use XML::Simple;
 use Params::Validate ':all';
 use Net::Lighthouse::Util;
 extends 'Net::Lighthouse';
+
 # read only attr
 has [
     'user_id',       'position',   'shared', 'project_id',
@@ -30,9 +31,10 @@ sub load {
     my $url =
         $self->base_url
       . '/projects/'
-      . $self->project_id . '/bins/'
+      . $self->project_id
+      . '/bins/'
       . $id . '.xml';
-    my $res = $ua->get( $url );
+    my $res = $ua->get($url);
     if ( $res->is_success ) {
         $self->load_from_xml( $res->content );
     }
@@ -45,7 +47,7 @@ sub load {
 
 sub load_from_xml {
     my $self = shift;
-    my $ref = Net::Lighthouse::Util->translate_from_xml( shift );
+    my $ref  = Net::Lighthouse::Util->translate_from_xml(shift);
 
     # dirty hack: some attrs are read-only, and Mouse doesn't support
     # writer => '...'
@@ -60,25 +62,35 @@ sub create {
     validate(
         @_,
         {
-            goals  => { type     => SCALAR },
-            title  => { type     => SCALAR },
-            due_on => { optional => 1, type => SCALAR },
+            name    => { type     => SCALAR },
+            query   => { type     => SCALAR },
+            default => { optional => 1, type => BOOLEAN },
         }
     );
     my %args = @_;
 
-    for my $field (qw/goals title due_on/) {
+    if ( exists $args{default} ) {
+        if ( $args{default} ) {
+            $args{default} = { content => 'true', type => 'boolean' };
+        }
+        else {
+            $args{default} = { content => 'false', type => 'boolean' };
+        }
+    }
+    
+
+    for my $field (qw/name query/) {
         next unless exists $args{$field};
         $args{$field} = { content => $args{$field} };
     }
 
-    my $xml = XMLout( { bin => \%args }, KeepRoot => 1);
+    my $xml = XMLout( { bin => \%args }, KeepRoot => 1 );
     my $ua = $self->ua;
 
     my $url = $self->base_url . '/projects/' . $self->project_id . '/bins.xml';
 
     my $request = HTTP::Request->new( 'POST', $url, undef, $xml );
-    my $res = $ua->request( $request );
+    my $res = $ua->request($request);
     if ( $res->is_success ) {
         $self->load_from_xml( $res->content );
         return 1;
@@ -95,30 +107,40 @@ sub update {
     validate(
         @_,
         {
-            goals  => { optional => 1, type     => SCALAR },
-            title  => { optional => 1, type     => SCALAR },
-            due_on => { optional => 1, type => SCALAR },
+            name    => { optional => 1, type     => SCALAR },
+            query   => { optional => 1, type     => SCALAR },
+            default => { optional => 1, type => BOOLEAN },
         }
     );
     my %args = @_;
 
-    for my $field (qw/goals title due_on/) {
+    if ( exists $args{default} ) {
+        if ( $args{default} ) {
+            $args{default} = { content => 'true', type => 'boolean' };
+        }
+        else {
+            $args{default} = { content => 'false', type => 'boolean' };
+        }
+    }
+
+    for my $field (qw/name query/) {
         next unless exists $args{$field};
         $args{$field} = { content => $args{$field} };
     }
 
-    my $xml = XMLout( { bin => \%args }, KeepRoot => 1);
+    my $xml = XMLout( { bin => \%args }, KeepRoot => 1 );
     my $ua = $self->ua;
     my $url =
         $self->base_url
       . '/projects/'
-      . $self->project_id . '/bins/'
+      . $self->project_id
+      . '/bins/'
       . $self->id . '.xml';
 
     my $request = HTTP::Request->new( 'PUT', $url, undef, $xml );
-    my $res = $ua->request( $request );
+    my $res = $ua->request($request);
     if ( $res->is_success ) {
-        $self->load( $self->id ); # let's reload
+        $self->load( $self->id );    # let's reload
         return 1;
     }
     else {
@@ -130,15 +152,16 @@ sub update {
 
 sub delete {
     my $self = shift;
-    my $ua = $self->ua;
+    my $ua   = $self->ua;
     my $url =
         $self->base_url
       . '/projects/'
-      . $self->project_id . '/bins/'
+      . $self->project_id
+      . '/bins/'
       . $self->id . '.xml';
 
     my $request = HTTP::Request->new( 'DELETE', $url );
-    my $res = $ua->request( $request );
+    my $res = $ua->request($request);
     if ( $res->is_success ) {
         return 1;
     }
@@ -151,13 +174,12 @@ sub delete {
 
 sub list {
     my $self = shift;
-    my $url =
-      $self->base_url . '/projects/' . $self->project_id . '/bins.xml';
-    my $ua  = $self->ua;
-    my $res = $ua->get($url);
+    my $url  = $self->base_url . '/projects/' . $self->project_id . '/bins.xml';
+    my $ua   = $self->ua;
+    my $res  = $ua->get($url);
     if ( $res->is_success ) {
         my $ts = XMLin( $res->content, KeyAttr => [] )->{'ticket-bin'};
-        $ts = [ $ts ] unless ref $ts eq 'ARRAY';
+        $ts = [$ts] unless ref $ts eq 'ARRAY';
         return map {
             my $t = Net::Lighthouse::Project::TicketBin->new(
                 map { $_ => $self->$_ }
