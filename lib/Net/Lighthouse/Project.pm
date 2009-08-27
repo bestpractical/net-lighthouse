@@ -58,8 +58,8 @@ sub create {
     validate(
         @_,
         {
+            name     => { type => SCALAR },
             archived => { optional => 1, type => BOOLEAN },
-            name     => { optional => 1, type => SCALAR },
             public   => { optional => 1, type => BOOLEAN },
         }
     );
