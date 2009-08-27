@@ -7,7 +7,7 @@ use XML::Simple;
 sub translate_from_xml {
     my $self = shift;
     my $ref = shift;
-    $ref = XMLin( $ref ) unless ref $ref;
+    $ref = XMLin( $ref, KeyAttr => [] ) unless ref $ref;
     %$ref = map { my $new = $_; $new =~ s/-/_/g; $new => $ref->{$_} } keys %$ref;
     for my $k ( keys %$ref ) {
         if ( ref $ref->{$k} eq 'HASH' ) {
