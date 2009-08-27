@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 58;
+use Test::More tests => 70;
 use Test::Mock::LWP;
 
 use_ok( 'Net::Lighthouse::Project' );
@@ -19,8 +19,8 @@ for my $attr( qw/archived created_at default_assigned_user_id
 }
 
 for my $method (
-    qw/create update delete tickets load load_from_xml list
-    initial_state/
+    qw/create update delete load load_from_xml list
+    initial_state tickets ticket_bins messages milestones changesets/
   )
 {
     can_ok( $project, $method );
@@ -127,13 +127,28 @@ is_deeply( $initial_state, $expected_initial_state, 'initial state' );
 $Mock_response->mock(
     content => sub {
         local $/;
-        open my $fh, '<', 't/data/tickets.xml' or die $!;
+        open my $fh, '<', 't/data/bins.xml' or die $!;
         <$fh>
     }
 );
 
-my @tickets = $p->tickets;
-is( scalar @tickets, 2, 'found tickets' );
-isa_ok( $tickets[0], 'Net::Lighthouse::Project::Ticket', 'found tickets' );
-is( $tickets[0]->number, 2, 'ticket number' );
+my @bins = $p->ticket_bins;
+is( scalar @bins, 3, 'found tickets' );
+isa_ok( $bins[0], 'Net::Lighthouse::Project::TicketBin' );
+is( $bins[0]->id, 48889, 'bin id' );
 
+for my $method (qw/milestones messages changesets tickets/) {
+    $Mock_response->mock(
+        content => sub {
+            local $/;
+            open my $fh, '<', "t/data/$method.xml" or die $!;
+            <$fh>;
+        }
+    );
+    my @list = $p->$method;
+    ok( scalar @list, 'found list' );
+
+    my $class = ucfirst $method;
+    $class =~ s/s$//;
+    isa_ok( $list[0], "Net::Lighthouse::Project::$class" );
+}

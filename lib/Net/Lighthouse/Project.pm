@@ -3,6 +3,12 @@ use Any::Moose;
 use XML::Simple;
 use Net::Lighthouse::Util;
 use Params::Validate ':all';
+use Net::Lighthouse::Project::Ticket;
+use Net::Lighthouse::Project::TicketBin;
+use Net::Lighthouse::Project::Milestone;
+use Net::Lighthouse::Project::Message;
+use Net::Lighthouse::Project::Changeset;
+
 extends 'Net::Lighthouse';
 # read only attr
 has [
@@ -196,15 +202,28 @@ sub initial_state {
     }
 }
 
-sub tickets {
+sub tickets { return shift->_list( 'Ticket' ) }
+sub ticket_bins { return shift->_list( 'TicketBin' ) }
+sub messages { return shift->_list( 'Message' ) }
+sub milestones { return shift->_list( 'Milestone' ) }
+sub changesets { return shift->_list( 'Changeset' ) }
+
+sub _list {
     my $self = shift;
-    require Net::Lighthouse::Project::Ticket;
-    my $ticket = Net::Lighthouse::Project::Ticket->new(
+    validate_pos(
+        @_,
+        {
+            type  => SCALAR,
+            regex => qr/^(TicketBin|Ticket|Message|Changeset|Milestone)$/,
+        }
+    );
+    my $class  = 'Net::Lighthouse::Project::' . shift;
+    my $object = $class->new(
         project_id => $self->id,
         map { $_ => $self->$_ }
           grep { $self->$_ } qw/account email password token/
     );
-    return $ticket->list( @_ );
+    return $object->list(@_);
 }
 
 1;
