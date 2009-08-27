@@ -22,6 +22,137 @@ has [qw/body title changes changed_at revision/] => (
 no Any::Moose;
 __PACKAGE__->meta->make_immutable;
 
+sub load {
+    my $self = shift;
+    validate_pos( @_, { type => SCALAR, regex => qr/^\d+$/ } );
+    my $revision = shift;
+    my $ua = $self->ua;
+    my $url =
+        $self->base_url
+      . '/projects/'
+      . $self->project_id . '/changesets/'
+      . $revision . '.xml';
+    my $res = $ua->get( $url );
+    if ( $res->is_success ) {
+        $self->load_from_xml( $res->content );
+    }
+    else {
+        die "try to get $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+}
+
+sub load_from_xml {
+    my $self = shift;
+    my $ref = Net::Lighthouse::Util->translate_from_xml( shift );
+
+    # dirty hack: some attrs are read-only, and Mouse doesn't support
+    # writer => '...'
+    for my $k ( keys %$ref ) {
+        $self->{$k} = $ref->{$k};
+    }
+    return $self;
+}
+
+sub create {
+    my $self = shift;
+    validate(
+        @_,
+        {
+            revision   => { type => SCALAR },
+            body       => { type => SCALAR },
+            title      => { type => SCALAR },
+            changes    => { type => SCALAR },
+            changed_at => { type => SCALAR },
+        }
+    );
+    my %args = @_;
+
+    for my $field (qw/revision body title changes changed_at/) {
+        next unless exists $args{$field};
+        $args{$field} = { content => $args{$field} };
+    }
+
+    my $xml = XMLout( { changeset => \%args }, KeepRoot => 1);
+    my $ua = $self->ua;
+
+    my $url = $self->base_url . '/projects/' . $self->project_id . '/changesets.xml';
+
+    my $request = HTTP::Request->new( 'POST', $url, undef, $xml );
+    my $res = $ua->request( $request );
+    if ( $res->is_success ) {
+        $self->load_from_xml( $res->content );
+        return 1;
+    }
+    else {
+        die "try to POST $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+}
+
+sub delete {
+    my $self = shift;
+    my $ua = $self->ua;
+    my $url =
+        $self->base_url
+      . '/projects/'
+      . $self->project_id . '/changesets/'
+      . $self->revision . '.xml';
+
+    my $request = HTTP::Request->new( 'DELETE', $url );
+    my $res = $ua->request( $request );
+    if ( $res->is_success ) {
+        return 1;
+    }
+    else {
+        die "try to DELETE $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+}
+
+sub list {
+    my $self = shift;
+    my $url =
+      $self->base_url . '/projects/' . $self->project_id . '/changesets.xml';
+    my $ua  = $self->ua;
+    my $res = $ua->get($url);
+    if ( $res->is_success ) {
+        my $ts = XMLin( $res->content, KeyAttr => [] )->{changeset};
+        $ts = [ $ts ] unless ref $ts eq 'ARRAY';
+        return map {
+            my $t = Net::Lighthouse::Project::Changeset->new(
+                map { $_ => $self->$_ }
+                  grep { $self->$_ } qw/account email password token project_id/
+            );
+            $t->load_from_xml($_);
+        } @$ts;
+    }
+    else {
+        die "try to get $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+
+}
+
+sub initial_state {
+    my $self = shift;
+    my $ua = $self->ua;
+    my $url =
+      $self->base_url . '/projects/' . $self->project_id . '/changesets/new.xml';
+    my $res = $ua->get( $url );
+    if ( $res->is_success ) {
+        return Net::Lighthouse::Util->translate_from_xml( $res->content );
+    }
+    else {
+        die "try to get $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+}
 
 1;
 
