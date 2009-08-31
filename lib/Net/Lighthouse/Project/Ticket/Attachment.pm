@@ -5,14 +5,20 @@ use Params::Validate ':all';
 use Net::Lighthouse::Util;
 
 # read only attr
-has [
-    'width',        'created_at',  'height',   'size',
-    'content_type', 'uploader_id', 'filename', 'url',
-    'type',         'id',          'code'
-  ] => (
-    isa => 'Maybe[Str]',
+has [ 'created_at' ] => (
+    isa => 'DateTime',
     is  => 'ro',
-  );
+);
+
+has [ 'width', 'height', 'size', 'uploader_id', 'id', ] => (
+    isa => 'Maybe[Int]',
+    is  => 'ro',
+);
+
+has [ 'content_type', 'filename', 'url', 'type', 'code' ] => (
+    isa => 'Str',
+    is  => 'ro',
+);
 
 no Any::Moose;
 __PACKAGE__->meta->make_immutable;
