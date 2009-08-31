@@ -6,7 +6,7 @@ use Net::Lighthouse::Util;
 
 # read only attr
 has [qw/created_at updated_at/] => (
-    isa => 'Maybe[DateTime]',
+    isa => 'DateTime',
     is  => 'ro',
 );
 
