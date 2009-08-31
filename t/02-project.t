@@ -3,18 +3,21 @@ use warnings;
 
 use Test::More tests => 70;
 use Test::Mock::LWP;
-
-use_ok( 'Net::Lighthouse::Project' );
+use DateTime;
+use_ok('Net::Lighthouse::Project');
 can_ok( 'Net::Lighthouse::Project', 'new' );
 
 my $project = Net::Lighthouse::Project->new;
 isa_ok( $project, 'Net::Lighthouse::Project' );
 isa_ok( $project, 'Net::Lighthouse' );
-for my $attr( qw/archived created_at default_assigned_user_id
-        default_milestone_id description description_html hidden
-        id license name open_tickets_count permalink public 
-        send_changesets_to_events updated_at open_states_list 
-        closed_states_list open_states closed_states/ ) {
+for my $attr (
+    qw/archived created_at default_assigned_user_id
+    default_milestone_id description description_html hidden
+    id license name open_tickets_count permalink public
+    send_changesets_to_events updated_at open_states_list
+    closed_states_list open_states closed_states/
+  )
+{
     can_ok( $project, $attr );
 }
 
@@ -28,59 +31,93 @@ for my $method (
 
 $project->account('sunnavy');
 
-$Mock_ua->mock( get => sub { $Mock_response } );
-$Mock_ua->mock( default_header => sub { } ); # to erase warning
+$Mock_ua->mock( get            => sub { $Mock_response } );
+$Mock_ua->mock( default_header => sub { } );                  # to erase warning
 $Mock_response->mock(
     content => sub {
         local $/;
         open my $fh, '<', 't/data/find_project_35918.xml' or die $!;
-        <$fh>
+        <$fh>;
     }
 );
 
 my $sd = Net::Lighthouse::Project->new( account => 'sunnavy' );
-my $load = $sd->load( 35918 );
+my $load = $sd->load(35918);
 is( $sd, $load, 'load return $self' );
 
 my %hash = (
     'description_html' => '<div><p>test for sd</p></div>',
-    'open_states_list' => 'new,open',
-    'open_states'      => 'new/f17  # You can add comments here
-open/aaa # if you want to.',
-    'default_assigned_user_id'  => undef,
-    'permalink'                 => 'sd',
-    'created_at'                => '2009-08-21T10:02:21Z',
+    'open_states_list' => [ 'new', 'open' ],
+    'open_states'      => [
+        {
+            name    => 'new',
+            color   => 'f17',
+            comment => 'You can add comments here'
+        },
+        { name => 'open', color => 'aaa', comment => 'if you want to.' }
+    ],
+    'default_assigned_user_id' => undef,
+    'permalink'                => 'sd',
+    'created_at'               => DateTime->new(
+        year   => 2009,
+        month  => 8,
+        day    => 21,
+        hour   => 10,
+        minute => 2,
+        second => 21,
+    ),
     'default_milestone_id'      => undef,
-    'send_changesets_to_events' => 'true',
-    'public'                    => 'false',
-    'id'                        => '35918',
-    'closed_states'             => 'resolved/6A0 # You can customize colors
-hold/EB0     # with 3 or 6 character hex codes
-invalid/A30  # \'A30\' expands to \'AA3300\'',
+    'send_changesets_to_events' => 1,
+    'public'                    => 0,
+    'id'                        => 35918,
+    'closed_states'             => [
+        {
+            name    => 'resolved',
+            color   => '6A0',
+            comment => 'You can customize colors'
+        },
+        {
+            name    => 'hold',
+            color   => 'EB0',
+            comment => 'with 3 or 6 character hex codes'
+        },
+        {
+            name    => 'invalid',
+            color   => 'A30',
+            comment => "'A30' expands to 'AA3300'"
+        },
+    ],
     'name'               => 'sd',
     'license'            => undef,
     'description'        => 'test for sd',
-    'archived'           => 'false',
-    'closed_states_list' => 'resolved,hold,invalid',
-    'updated_at'         => '2009-08-24T05:46:52Z',
-    'hidden'             => 'false'
+    'archived'           => 0,
+    'closed_states_list' => [ 'resolved', 'hold', 'invalid' ],
+    'updated_at'         => DateTime->new(
+        year   => 2009,
+        month  => 8,
+        day    => 24,
+        hour   => 5,
+        minute => 46,
+        second => 52
+    ),
+    'hidden' => 0,
 );
 
 for my $k ( keys %hash ) {
-    is( $sd->$k, $hash{$k}, "$k is loaded" );
+    is_deeply( $sd->$k, $hash{$k}, "$k is loaded" );
 }
 
 $Mock_response->mock(
     content => sub {
         local $/;
         open my $fh, '<', 't/data/projects.xml' or die $!;
-        <$fh>
+        <$fh>;
     }
 );
 
 my $p = Net::Lighthouse::Project->new( account => 'sunnavy', id => 35918 );
 my @projects = $p->list;
-is( scalar @projects, 2, 'number of projects' );
+is( scalar @projects, 2,     'number of projects' );
 is( $projects[0]->id, 35918, 'id of 2nd project' );
 is( $projects[1]->id, 36513, 'id of 2nd project' );
 is_deeply( $projects[0], $sd,
@@ -91,44 +128,63 @@ $Mock_response->mock(
     content => sub {
         local $/;
         open my $fh, '<', 't/data/project_new.xml' or die $!;
-        <$fh>
+        <$fh>;
     }
 );
 
-my $initial_state = $p->initial_state;
+my $initial_state          = $p->initial_state;
 my $expected_initial_state = {
     'description_html' => undef,
-    'open_states_list' => 'new,open',
-    'open_states'      => 'new/f17  # You can add comments here
-open/aaa # if you want to.',
+    'open_states_list' => [ 'new', 'open' ],
+    'open_states'      => [
+        {
+            name    => 'new',
+            color   => 'f17',
+            comment => 'You can add comments here'
+        },
+        { name => 'open', color => 'aaa', comment => 'if you want to.' }
+    ],
     'permalink'                 => undef,
     'default_assigned_user_id'  => undef,
     'default_milestone_id'      => undef,
     'created_at'                => undef,
-    'send_changesets_to_events' => 'true',
-    'public'                    => 'false',
-    'open_tickets_count'        => '0',
-    'closed_states'             => 'resolved/6A0 # You can customize colors
-hold/EB0     # with 3 or 6 character hex codes
-invalid/A30  # \'A30\' expands to \'AA3300\'',
+    'send_changesets_to_events' => 1,
+    'public'                    => 0,
+    'open_tickets_count'        => 0,
+    'closed_states'             => [
+        {
+            name    => 'resolved',
+            color   => '6A0',
+            comment => 'You can customize colors'
+        },
+        {
+            name    => 'hold',
+            color   => 'EB0',
+            comment => 'with 3 or 6 character hex codes'
+        },
+        {
+            name    => 'invalid',
+            color   => 'A30',
+            comment => "'A30' expands to 'AA3300'"
+        },
+    ],
     'name'               => undef,
     'license'            => undef,
     'description'        => undef,
-    'archived'           => 'false',
+    'archived'           => 0,
     'updated_at'         => undef,
-    'closed_states_list' => 'resolved,hold,invalid',
-    'hidden'             => 'false'
+    'closed_states_list' => [ 'resolved', 'hold', 'invalid' ],
+    'hidden'             => 0,
 };
 
 is_deeply( $initial_state, $expected_initial_state, 'initial state' );
-
 
 # test tickets
 $Mock_response->mock(
     content => sub {
         local $/;
         open my $fh, '<', 't/data/bins.xml' or die $!;
-        <$fh>
+        <$fh>;
     }
 );
 
