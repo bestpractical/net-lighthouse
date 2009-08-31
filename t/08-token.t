@@ -40,7 +40,7 @@ my %hash = (
     'read_only'  => 0,
     'user_id'    => 1,
     'token'      => '01234567890123456789012345678900123456789',
-    'project_id' => '',
+    'project_id' => undef,
     'note'       => 'test 1'
 );
 

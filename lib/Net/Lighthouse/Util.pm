@@ -31,6 +31,10 @@ sub translate_from_xml {
             elsif ( $ref->{$k}{type} && $ref->{$k}{type} eq 'yaml' ) {
                     $ref->{$k} = Load( $ref->{$k}{content} );
             }
+            elsif ( $ref->{$k}{type} && $ref->{$k}{type} eq 'integer' ) {
+                    $ref->{$k} =
+                      defined $ref->{$k}{content} ? $ref->{$k}{content} : undef;
+            }
             elsif ( defined $ref->{$k}{content} ) {
                 $ref->{$k} = $ref->{$k}{content};
             }

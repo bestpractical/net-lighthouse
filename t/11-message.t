@@ -122,7 +122,7 @@ $message = Net::Lighthouse::Project::Message->new(
 );
 
 my $expect_initial_state = {
-    'parent_id'         => '',
+    'parent_id'         => undef,
     'permalink'         => '',
     'body'              => '',
     'attachments_count' => '0',
@@ -130,9 +130,9 @@ my $expect_initial_state = {
     'updated_at'        => undef,
     'title'             => '',
     'body_html'         => '',
-    'user_id'           => '',
+    'user_id'           => undef,
     'comments_count'    => '0',
-    'project_id'        => ''
+    'project_id'        => undef 
 
 };
 is_deeply( $message->initial_state, $expect_initial_state, 'initial state' );

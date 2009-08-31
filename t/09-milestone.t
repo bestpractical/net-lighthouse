@@ -121,10 +121,10 @@ my $expect_initial_state = {
     'permalink'          => '',
     'created_at'         => undef,
     'goals_html'         => '',
-    'open_tickets_count' => '0',
-    'tickets_count'      => '0',
+    'open_tickets_count' => 0,
+    'tickets_count'      => 0,
     'title'              => '',
     'goals'              => '',
-    'project_id'         => '',
+    'project_id'         => undef,
 };
 is_deeply( $milestone->initial_state, $expect_initial_state, 'initial state' );
