@@ -42,7 +42,12 @@ has 'versions' => (
 );
 
 # read&write attr
-has [qw/title state assigned_user_id milestone_id tag/] => (
+has [qw/assigned_user_id milestone_id/] => (
+    isa => 'Maybe[Int]',
+    is  => 'rw',
+);
+
+has [qw/title state tag/] => (
     isa => 'Maybe[Str]',
     is  => 'rw',
 );
