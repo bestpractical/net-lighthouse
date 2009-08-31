@@ -5,18 +5,23 @@ use Params::Validate ':all';
 use Net::Lighthouse::Util;
 extends 'Net::Lighthouse';
 # read only attr
+has [qw/created_at updated_at/] => (
+    isa => 'Maybe[DateTime]',
+    is  => 'ro',
+);
+
 has [
-    'created_at',     'body_html',
-    'user_name',      'permalink',
-    'comments_count', 'parent_id',
-    'url',            'updated_at',
-    'id',             'user_id',
-    'project_id',     'all_attachments_count',
-    'attachments_count',
+    qw/id user_id parent_id comments_count project_id
+      all_attachments_count attachments_count/
   ] => (
-    isa => 'Maybe[Str]',
+    isa => 'Maybe[Int]',
     is  => 'ro',
   );
+
+has [ 'body_html', 'user_name', 'permalink', 'url', ] => (
+    isa => 'Maybe[Str]',
+    is  => 'ro',
+);
 
 has 'comments' => (
     isa => 'ArrayRef[Net::Lighthouse::Project::Message]',

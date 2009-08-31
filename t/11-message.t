@@ -3,6 +3,7 @@ use warnings;
 
 use Test::More tests => 53;
 use Test::Mock::LWP;
+use DateTime;
 
 use_ok('Net::Lighthouse::Project');
 use_ok('Net::Lighthouse::Project::Message');
@@ -54,22 +55,36 @@ my %hash = (
     'parent_id'         => undef,
     'body'              => 'ha-ha ha-ha',
     'attachments_count' => '0',
-    'created_at'        => '2009-08-27T07:29:05Z',
+    'created_at'        => DateTime->new(
+        year => 2009,
+        month => 8,
+        day => 27,
+        hour => 7,
+        minute => 29,
+        second => 5,
+    ),
     'url' => 'http://sunnavy.lighthouseapp.com/projects/35918/messages/20298',
-    'id'  => '20298',
-    'comments_count'        => '3',
-    'all_attachments_count' => '1',
-    'project_id'            => '35918',
+    'id'  => 20298,
+    'comments_count'        => 3,
+    'all_attachments_count' => 1,
+    'project_id'            => 35918,
     'account'               => 'sunnavy',
     'user_name'             => 'sunnavy (at gmail)',
-    'updated_at'            => '2009-08-27T07:44:33Z',
+    'updated_at'            => DateTime->new(
+        year => 2009,
+        month => 8,
+        day => 27,
+        hour => 7,
+        minute => 44,
+        second => 33,
+    ),
     'body_html'             => '<div><p>ha-ha ha-ha</p></div>',
     'title'                 => '1st message lala',
-    'user_id'               => '67166'
+    'user_id'               => 67166
 );
 
 for my $k ( keys %hash ) {
-    is( $m1->$k, $hash{$k}, "$k is loaded" );
+    is_deeply( $m1->$k, $hash{$k}, "$k is loaded" );
 }
 
 is( @{$m1->comments}, 3, 'comments number' );
@@ -111,8 +126,8 @@ my $expect_initial_state = {
     'permalink'         => '',
     'body'              => '',
     'attachments_count' => '0',
-    'created_at'        => '',
-    'updated_at'        => '',
+    'created_at'        => undef,
+    'updated_at'        => undef,
     'title'             => '',
     'body_html'         => '',
     'user_id'           => '',
