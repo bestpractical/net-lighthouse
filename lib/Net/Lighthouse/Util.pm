@@ -52,19 +52,21 @@ sub datetime_from_string {
     my $class  = shift;
     my $string = shift;
     if (   $string
-        && $string =~ /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z/ )
+        && $string =~
+        /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(Z|[+-]\d{2}:\d{2})/ )
     {
 
         #    2009-06-01T13:00:10Z
-        return DateTime->new(
+        my $dt = DateTime->new(
             year      => $1,
             month     => $2,
             day       => $3,
             hour      => $4,
             minute    => $5,
             second    => $6,
-            time_zone => 'UTC',
+            time_zone => $7 eq 'Z' ? 'UTC' : $7,
         );
+        $dt->set_time_zone( 'UTC' );
     }
 }
 
