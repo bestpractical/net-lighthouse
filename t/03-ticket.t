@@ -3,7 +3,7 @@ use warnings;
 
 use Test::More tests => 70;
 use Test::Mock::LWP;
-
+use DateTime;
 use_ok('Net::Lighthouse::Project');
 use_ok('Net::Lighthouse::Project::Ticket');
 can_ok( 'Net::Lighthouse::Project::Ticket', 'new' );
@@ -54,33 +54,47 @@ my $load = $n1->load(1);
 is( $load, $n1, 'load return $self' );
 
 my %hash = (
-    'priority'          => '1',
-    'number'            => '1',
+    'priority'          => 1,
+    'number'            => 1,
     'state'             => 'new',
     'permalink'         => 'first-ticket',
     'milestone_id'      => undef,
-    'created_at'        => '2009-08-21T11:15:50Z',
-    'assigned_user_id'  => '67166',
-    'attachments_count' => '1',
+    'created_at' => DateTime->new(
+        year   => '2009',
+        month  => 8,
+        day    => 21,
+        hour   => 11,
+        minute => 15,
+        second => 50,
+    ),
+    'assigned_user_id'  => 67166,
+    'attachments_count' => 1,
     'url'        => 'http://sunnavy.lighthouseapp.com/projects/35918/tickets/1',
     'tag'        => 'first',
-    'creator_id' => '67166',
-    'project_id' => '35918',
+    'creator_id' => 67166,
+    'project_id' => 35918,
     'creator_name'       => 'sunnavy (at gmail)',
-    'closed'             => 'false',
+    'closed'             => 0,
     'latest_body'        => 'this\'s 1st description',
     'account'            => 'sunnavy',
     'raw_data'           => undef,
     'milestone_due_on'   => undef,
     'user_name'          => 'sunnavy (at gmail)',
-    'updated_at'         => '2009-08-21T11:15:53Z',
-    'user_id'            => '67166',
+    'updated_at'         => DateTime->new( 
+        year   => '2009',
+        month  => 8,
+        day    => 21,
+        hour   => 11,
+        minute => 15,
+        second => 53,
+    ),
+    'user_id'            => 67166,
     'assigned_user_name' => 'sunnavy (at gmail)',
     'title'              => 'first ticket'
 );
 
 for my $k ( keys %hash ) {
-    is( $n1->$k, $hash{$k}, "$k is loaded" );
+    is_deeply( $n1->$k, $hash{$k}, "$k is loaded" );
 }
 
 is( @{$n1->versions}, 1, 'version number' );
@@ -120,19 +134,19 @@ $ticket = Net::Lighthouse::Project::Ticket->new(
     project_id => 35918,
 );
 my $expect_initial_state = {
-    'priority'          => '0',
+    'priority'          => 0,
     'number'            => undef,
     'milestone_id'      => undef,
     'permalink'         => undef,
     'state'             => undef,
     'assigned_user_id'  => undef,
-    'attachments_count' => '0',
+    'attachments_count' => 0,
     'created_at'        => undef,
     'url'         => 'http://sunnavy.lighthouseapp.com/projects/35918/tickets/',
     'tag'         => undef,
     'creator_id'  => undef,
-    'project_id'  => '35918',
-    'closed'      => 'false',
+    'project_id'  => 35918,
+    'closed'      => 0,
     'latest_body' => undef,
     'raw_data'    => undef,
     'milestone_due_on' => undef,
