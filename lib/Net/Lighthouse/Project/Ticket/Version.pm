@@ -5,18 +5,36 @@ use Params::Validate ':all';
 use Net::Lighthouse::Util;
 
 # read only attr
+has [qw/created_at updated_at/] => (
+    isa => 'Maybe[DateTime]',
+    is  => 'ro',
+);
+
 has [
-    'assigned_user_name', 'assigned_user_id',
-    'attachments_count',  'body',
-    'body_html',          'closed',
-    'created_at',         'creator_id',
-    'milestone_id',       'number',
-    'permalink',          'project_id',
+    qw/milestone_id assigned_user_id number user_id
+      project_id creator_id attachments_count/
+  ] => (
+    isa => 'Maybe[Int]',
+    is  => 'ro',
+  );
+
+has [qw/closed/] => (
+    isa => 'Bool',
+    is  => 'ro',
+);
+
+has [qw/diffable_attributes/] => (
+    isa => 'HashRef',
+    is  => 'ro',
+);
+
+has [
+    'assigned_user_name', 'body',
+    'body_html',          'permalink',
     'state',              'tag',
-    'title',              'updated_at',
-    'user_id',            'user_name',
-    'creator_name',       'url',
-    'diffable_attributes',
+    'title',              'user_id',
+    'user_name',          'creator_name',
+    'url',
   ] => (
     isa => 'Maybe[Str]',
     is  => 'ro',
