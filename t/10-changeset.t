@@ -3,6 +3,7 @@ use warnings;
 
 use Test::More tests => 32;
 use Test::Mock::LWP;
+use DateTime;
 
 use_ok('Net::Lighthouse::Project');
 use_ok('Net::Lighthouse::Project::Changeset');
@@ -45,25 +46,28 @@ is( $load, $n1, 'load return $self' );
 my %hash = (
                  'account' => 'sunnavy',
                  'body' => '#{unprocessed body}',
-                 'revision' => '983',
-                 'changes' => '--- 
-  - - M
-    - /trunk/test/unit/changeset_test.rb
-  - - M
-    - /trunk/app/models/changeset.rb
-  - - M
-    - /trunk/db/schema.rb
-
-  ',
-                 'user_id' => '1',
+                 'revision' => 983,
+                 'changes' => [
+                     [ 'M', '/trunk/test/unit/changeset_test.rb' ],
+                     [ 'M', '/trunk/app/models/changeset.rb' ],
+                     [ 'M', '/trunk/db/schema.rb' ]
+                 ],
+                 'user_id' => 1,
                  'title' => 'rick committed changeset [983]',
                  'body_html' => '#{processed HTML body}',
-                 'changed_at' => '2007-03-21T21:45:23Z',
-                 'project_id' => '2'
+                 'changed_at' => DateTime->new(
+                     year => 2007,
+                     month => 3,
+                     day => 21,
+                     hour => 21,
+                     minute => 45, 
+                     second => 23,
+                 ),
+                 'project_id' => 2,
 );
 
 for my $k ( keys %hash ) {
-    is( $n1->$k, $hash{$k}, "$k is loaded" );
+    is_deeply( $n1->$k, $hash{$k}, "$k is loaded" );
 }
 
 $Mock_response->mock(
@@ -97,13 +101,12 @@ $changeset = Net::Lighthouse::Project::Changeset->new(
 my $expect_initial_state = {
     'body'     => '',
     'revision' => '',
-    'changes'  => '--- []
-
-',
+    'changes'  => [],
     'user_id'    => '',
     'title'      => '',
     'body_html'  => '',
-    'changed_at' => '',
-    'project_id' => '2'
+    'changed_at' => undef,
+    'project_id' => 2
 };
+
 is_deeply( $changeset->initial_state, $expect_initial_state, 'initial state' );

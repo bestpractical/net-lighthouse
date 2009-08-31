@@ -5,16 +5,29 @@ use Params::Validate ':all';
 use Net::Lighthouse::Util;
 extends 'Net::Lighthouse';
 # read only attr
-has [
-    'body',    'revision', 'project_id', 'changed_at',
-    'changes', 'user_id',  'title',      'body_html',
-  ] => (
+
+has [qw/project_id user_id/] => (
+    isa => 'Int',
+    is  => 'ro',
+);
+
+has 'body_html' => (
     isa => 'Maybe[Str]',
     is  => 'ro',
-  );
+);
 
 # read&write attr
-has [qw/body title changes changed_at revision/] => (
+has 'changed_at' => (
+    isa => 'DateTime',
+    is  => 'rw',
+);
+
+has 'changes' => (
+    isa => 'ArrayRef',
+    is  => 'rw',
+);
+
+has [qw/body title revision/] => (
     isa => 'Maybe[Str]',
     is  => 'rw',
 );
