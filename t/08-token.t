@@ -2,6 +2,7 @@ use strict;
 use warnings;
 
 use Test::More tests => 19;
+use DateTime;
 
 use_ok('Net::Lighthouse::Token');
 can_ok( 'Net::Lighthouse::Token', 'new' );

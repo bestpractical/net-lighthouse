@@ -47,7 +47,9 @@ sub translate_from_xml {
 sub datetime_from_string {
     my $class  = shift;
     my $string = shift;
-    if ( $string =~ /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z/ ) {
+    if (   $string
+        && $string =~ /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z/ )
+    {
 
         #    2009-06-01T13:00:10Z
         return DateTime->new(
