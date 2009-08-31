@@ -6,7 +6,7 @@ use XML::Simple;
 use DateTime;
 
 sub translate_from_xml {
-    my $self = shift;
+    my $class = shift;
     my $ref = shift;
     $ref = XMLin( $ref, KeyAttr => [] ) unless ref $ref;
     %$ref = map { my $new = $_; $new =~ s/-/_/g; $new => $ref->{$_} } keys %$ref;
@@ -14,6 +14,18 @@ sub translate_from_xml {
         if ( ref $ref->{$k} eq 'HASH' ) {
             if ( $ref->{$k}{nil} && $ref->{$k}{nil} eq 'true' ) {
                 $ref->{$k} = undef;
+            }
+            elsif ( $ref->{$k}{type} && $ref->{$k}{type} eq 'boolean' ) {
+                if ( $ref->{$k}{content} eq 'true' ) {
+                    $ref->{$k} = 1;
+                }
+                else {
+                    $ref->{$k} = 0;
+                }
+            }
+            elsif ( $ref->{$k}{type} && $ref->{$k}{type} eq 'datetime' ) {
+                    $ref->{$k} =
+                      $class->datetime_from_string( $ref->{$k}{content} );
             }
             elsif ( defined $ref->{$k}{content} ) {
                 $ref->{$k} = $ref->{$k}{content};
