@@ -4,6 +4,7 @@ use warnings;
 package Net::Lighthouse::Util;
 use XML::Simple;
 use DateTime;
+use YAML::Syck;
 
 sub translate_from_xml {
     my $class = shift;
@@ -26,6 +27,9 @@ sub translate_from_xml {
             elsif ( $ref->{$k}{type} && $ref->{$k}{type} eq 'datetime' ) {
                     $ref->{$k} =
                       $class->datetime_from_string( $ref->{$k}{content} );
+            }
+            elsif ( $ref->{$k}{type} && $ref->{$k}{type} eq 'yaml' ) {
+                    $ref->{$k} = Load( $ref->{$k}{content} );
             }
             elsif ( defined $ref->{$k}{content} ) {
                 $ref->{$k} = $ref->{$k}{content};
