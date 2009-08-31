@@ -3,6 +3,7 @@ use warnings;
 
 use Test::More tests => 43;
 use Test::Mock::LWP;
+use DateTime;
 
 use_ok('Net::Lighthouse::Project');
 use_ok('Net::Lighthouse::Project::Milestone');

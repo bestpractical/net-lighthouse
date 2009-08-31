@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 use Test::More tests => 47;
-
+use DateTime;
 use_ok('Net::Lighthouse::Project::Ticket::Version');
 can_ok( 'Net::Lighthouse::Project::Ticket::Version', 'new' );
 
