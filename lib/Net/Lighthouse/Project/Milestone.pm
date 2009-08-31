@@ -5,16 +5,20 @@ use Params::Validate ':all';
 use Net::Lighthouse::Util;
 extends 'Net::Lighthouse';
 # read only attr
-has [
-    'open_tickets_count', 'created_at',
-    'goals_html',            'user_name',
-    'permalink',             'project_id',
-    'tickets_count',      'url',
-    'updated_at',            'id',
-  ] => (
+has [qw/created_at updated_at/] => (
+    isa => 'Maybe[DateTime]',
+    is  => 'ro',
+);
+
+has [qw/open_tickets_count id project_id tickets_count/] => (
+    isa => 'Int',
+    is  => 'ro',
+);
+
+has [ 'goals_html', 'user_name', 'permalink', 'url', ] => (
     isa => 'Maybe[Str]',
     is  => 'ro',
-  );
+);
 
 # read&write attr
 has [qw/title goals due_on/] => (
