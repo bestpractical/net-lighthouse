@@ -11,19 +11,41 @@ use Net::Lighthouse::Project::Changeset;
 
 extends 'Net::Lighthouse';
 # read only attr
+
+has [qw/created_at updated_at/] => (
+    isa => 'DateTime',
+    is  => 'ro',
+);
+
+has [ qw/ open_states_list closed_states_list open_states closed_states / ] => (
+    isa => 'ArrayRef',
+    is  => 'ro',
+  );
 has [
-    qw/created_at default_assigned_user_id default_milestone_id description
-      description_html hidden id open_tickets_count permalink
-      send_changesets_to_events updated_at open_states_list closed_states_list
-      open_states closed_states access license/
-  ] => (
-    isa => 'Maybe[Str]',
+    qw/default_assigned_user_id default_milestone_id id open_tickets_count /] =>
+  (
+    isa => 'Maybe[Int]',
+    is  => 'ro',
+  );
+has [ qw/hidden send_changesets_to_events/ ] =>
+  (
+    isa => 'Bool',
     is  => 'ro',
   );
 
-# read&write attr
-has [qw/archived name public/] => (
+has [qw/description description_html permalink access license/] => (
     isa => 'Maybe[Str]',
+    is  => 'ro',
+);
+
+# read&write attr
+has [qw/archived public/] => (
+    isa => 'Bool',
+    is  => 'rw',
+);
+
+has [qw/name/] => (
+    isa => 'Str',
     is  => 'rw',
 );
 
@@ -49,7 +71,7 @@ sub load {
 
 sub load_from_xml {
     my $self = shift;
-    my $ref = Net::Lighthouse::Util->translate_from_xml( shift );
+    my $ref = $self->_translate_from_xml( shift );
 
     # dirty hack: some attrs are read-only, and Mouse doesn't support
     # writer => '...'
@@ -193,7 +215,7 @@ sub initial_state {
     my $url = $self->base_url . '/projects/new.xml';
     my $res = $ua->get( $url );
     if ( $res->is_success ) {
-        return Net::Lighthouse::Util->translate_from_xml( $res->content );
+        return $self->_translate_from_xml( $res->content );
     }
     else {
         die "try to get $url failed: "
@@ -224,6 +246,30 @@ sub _list {
           grep { $self->$_ } qw/account email password token/
     );
     return $object->list(@_);
+}
+
+sub _translate_from_xml {
+    my $self = shift;
+    my $ref = Net::Lighthouse::Util->translate_from_xml(shift);
+    for (qw/open_states_list closed_states_list/) {
+        $ref->{$_} = [ split /,/, $ref->{$_} ];
+    }
+
+    for my $states (qw/ open_states closed_states /) {
+        my @values = split /\n/, $ref->{$states};
+        my @new_values;
+        for my $value (@values) {
+            # e.g. new/f17  # You can add comments here
+            if ( $value =~ m{(\w+)(?:/(\w+))?\s+#?\s*(.*)?} ) {
+                push @new_values, { name => $1, color => $2, comment => $3 };
+            }
+            else {
+                warn "parse $value failed";
+            }
+        }
+        $ref->{$states} = [@new_values];
+    }
+    return $ref;
 }
 
 1;
