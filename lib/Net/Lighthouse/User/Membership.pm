@@ -5,8 +5,13 @@ use Params::Validate ':all';
 use Net::Lighthouse::Util;
 
 # read only attr
-has [qw/id user_id account project/] => (
-    isa => 'Maybe[Str]',
+has [qw/id user_id/] => (
+    isa => 'Int',
+    is  => 'ro',
+);
+
+has [qw/account project/] => (
+    isa => 'Str',
     is  => 'ro',
 );
 
