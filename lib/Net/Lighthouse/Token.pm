@@ -5,13 +5,35 @@ use Params::Validate ':all';
 use Net::Lighthouse::Util;
 
 # read only attr
-has [
-    'project_id', 'account',   'user_id', 'created_at',
-    'token',      'read_only', 'note'
-  ] => (
+has 'created_at' => (
+    isa => 'DateTime',
+    is  => 'ro',
+);
+
+has 'user_id' => (
+    isa => 'Int',
+    is  => 'ro',
+);
+
+has 'project_id' => (
+    isa => 'Maybe[Int]',
+    is  => 'ro',
+);
+
+has 'read_only' => (
+    isa => 'Bool',
+    is  => 'ro',
+);
+
+has 'token' => (
+    isa => 'Str',
+    is  => 'ro',
+);
+
+has [ 'account', 'note' ] => (
     isa => 'Maybe[Str]',
     is  => 'ro',
-  );
+);
 
 no Any::Moose;
 __PACKAGE__->meta->make_immutable;

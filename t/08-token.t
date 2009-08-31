@@ -27,15 +27,22 @@ my $xml = do {
 my $m = $token->load_from_xml($xml);
 is( $m, $token, 'load return $self' );
 my %hash = (
-    'created_at' => '2007-04-21T18:17:32Z',
+    'created_at' => DateTime->new(
+        year   => 2007,
+        month  => 4,
+        day    => 21,
+        hour   => 18,
+        minute => 17,
+        second => 32,
+    ),
     'account'    => 'http://activereload.lighthouseapp.com',
-    'read_only'  => 'false',
-    'user_id'    => '1',
+    'read_only'  => 0,
+    'user_id'    => 1,
     'token'      => '01234567890123456789012345678900123456789',
     'project_id' => '',
     'note'       => 'test 1'
 );
 
 for my $k ( keys %hash ) {
-    is( $m->$k, $hash{$k}, "$k is loaded" );
+    is_deeply( $m->$k, $hash{$k}, "$k is loaded" );
 }
