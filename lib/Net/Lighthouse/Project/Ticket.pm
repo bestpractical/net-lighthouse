@@ -5,17 +5,27 @@ use Params::Validate ':all';
 use Net::Lighthouse::Util;
 extends 'Net::Lighthouse';
 # read only attr
+has [qw/created_at updated_at milestone_due_on/] => (
+    isa => 'Maybe[DateTime]',
+    is  => 'ro',
+);
+
+has [qw/number priority user_id project_id creator_id attachments_count/] => (
+    isa => 'Maybe[Int]',
+    is  => 'ro',
+);
+
+has [qw/closed /] => (
+    isa => 'Bool',
+    is  => 'ro',
+);
+
 has [
-    'priority',          'raw_data',
-    'number',            'milestone_due_on',
-    'created_at',        'user_name',
-    'state',             'permalink',
-    'versions',          'url',
-    'updated_at',        'closed',
-           'latest_body',
-    'user_id',           'project_id',
-    'attachments_count', 'creator_id',
-    'creator_name',      'assigned_user_name',
+    'raw_data',    'user_name',
+    'state',       'permalink',
+    'versions',    'url',
+    'latest_body', 'creator_name',
+    'assigned_user_name',
   ] => (
     isa => 'Maybe[Str]',
     is  => 'ro',
