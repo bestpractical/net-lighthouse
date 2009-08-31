@@ -40,7 +40,7 @@ my %hash = (
     'website'    => undef,
     'avatar_url' => '/images/avatar.gif',
     'name'       => 'sunnavy (at gmail)',
-    'id'         => '67166',
+    'id'         => 67166,
     'job'        => ''
 );
 

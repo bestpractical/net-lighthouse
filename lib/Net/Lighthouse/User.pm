@@ -6,7 +6,12 @@ use Net::Lighthouse::Util;
 extends 'Net::Lighthouse';
 
 # read only attr
-has [qw/id avatar_url/] => (
+has 'id' => (
+    isa => 'Int',
+    is  => 'ro',
+);
+
+has 'avatar_url' => (
     isa => 'Maybe[Str]',
     is  => 'ro',
 );
