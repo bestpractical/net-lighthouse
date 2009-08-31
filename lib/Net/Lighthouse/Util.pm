@@ -3,6 +3,7 @@ use warnings;
 
 package Net::Lighthouse::Util;
 use XML::Simple;
+use DateTime;
 
 sub translate_from_xml {
     my $self = shift;
@@ -25,6 +26,24 @@ sub translate_from_xml {
         }
     }
     return $ref;
+}
+
+sub datetime_from_string {
+    my $class  = shift;
+    my $string = shift;
+    if ( $string =~ /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})Z/ ) {
+
+        #    2009-06-01T13:00:10Z
+        return DateTime->new(
+            year      => $1,
+            month     => $2,
+            day       => $3,
+            hour      => $4,
+            minute    => $5,
+            second    => $6,
+            time_zone => 'UTC',
+        );
+    }
 }
 
 1;
