@@ -3,6 +3,7 @@ use warnings;
 
 use Test::More tests => 35;
 use Test::Mock::LWP;
+use DateTime;
 
 use_ok('Net::Lighthouse::Project');
 use_ok('Net::Lighthouse::Project::TicketBin');
@@ -45,19 +46,26 @@ is( $load, $b1, 'load return $self' );
 my %hash = (
     'query'         => 'state:open',
     'account'       => 'sunnavy',
-    'position'      => '1',
+    'position'      => 1,
     'name'          => 'Open tickets',
     'default'       => undef,
-    'shared'        => 'true',
-    'updated_at'    => '2009-08-21T10:02:21Z',
-    'tickets_count' => '2',
-    'user_id'       => '67166',
-    'id'            => '48889',
-    'project_id'    => '35918',
+    'shared'        => 1,
+    'updated_at'    => DateTime->new(
+        year => 2009,
+        month => 8,
+        day => 21,
+        hour => 10,
+        minute => 2,
+        second => 21,
+    ),
+    'tickets_count' => 2,
+    'user_id'       => 67166,
+    'id'            => 48889,
+    'project_id'    => 35918,
 );
 
 for my $k ( keys %hash ) {
-    is( $b1->$k, $hash{$k}, "$k is loaded" );
+    is_deeply( $b1->$k, $hash{$k}, "$k is loaded" );
 }
 
 $Mock_response->mock(

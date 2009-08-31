@@ -6,16 +6,28 @@ use Net::Lighthouse::Util;
 extends 'Net::Lighthouse';
 
 # read only attr
-has [
-    'user_id',       'position',   'shared', 'project_id',
-    'tickets_count', 'updated_at', 'id'
-  ] => (
-    isa => 'Maybe[Str]',
+has 'updated_at' => (
+    isa => 'DateTime',
     is  => 'ro',
-  );
+);
+
+has [ 'user_id', 'position', 'project_id', 'tickets_count', 'id' ] => (
+    isa => 'Int',
+    is  => 'ro',
+);
+
+has 'shared' => (
+    isa => 'Bool',
+    is  => 'ro',
+);
 
 # read&write attr
-has [qw/name query default/] => (
+has 'default' => (
+    isa => 'Bool',
+    is  => 'rw',
+);
+
+has [qw/name query/] => (
     isa => 'Maybe[Str]',
     is  => 'rw',
 );
