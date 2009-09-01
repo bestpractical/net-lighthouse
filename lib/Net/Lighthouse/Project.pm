@@ -57,7 +57,7 @@ sub load {
     validate_pos( @_, { type => SCALAR, regex => qr/^\d+|\w+$/ } );
     my $id = shift;
 
-    if ( $id !~ /^\d$/ ) {
+    if ( $id !~ /^\d+$/ ) {
 
         # so we got a project name, let's find it
         my ( $project ) = grep { $_->name eq $id } $self->list;
