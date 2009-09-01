@@ -10,6 +10,8 @@ requires 'Params::Validate';
 requires 'XML::Simple';
 requires 'LWP';
 requires 'MIME::Base64';
+requires 'YAML::Syck';
+requires 'DateTime';
 
 test_requires 'Test::More';
 test_requires 'Test::Mock::LWP';
