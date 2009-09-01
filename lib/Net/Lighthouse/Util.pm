@@ -9,6 +9,7 @@ use YAML::Syck;
 sub translate_from_xml {
     my $class = shift;
     my $ref = shift;
+    return unless $ref;
     $ref = XMLin( $ref, KeyAttr => [] ) unless ref $ref;
     %$ref = map { my $new = $_; $new =~ s/-/_/g; $new => $ref->{$_} } keys %$ref;
     for my $k ( keys %$ref ) {
