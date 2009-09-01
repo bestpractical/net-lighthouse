@@ -243,6 +243,30 @@ sub messages { return shift->_list( 'Message' ) }
 sub milestones { return shift->_list( 'Milestone' ) }
 sub changesets { return shift->_list( 'Changeset' ) }
 
+sub ticket { return shift->_new( 'Ticket' ) }
+sub ticket_bin { return shift->_new( 'TicketBin' ) }
+sub message { return shift->_new( 'Message' ) }
+sub milestone { return shift->_new( 'Milestone' ) }
+sub changeset { return shift->_new( 'Changeset' ) }
+
+sub _new {
+    my $self = shift;
+    validate_pos(
+        @_,
+        {
+            type  => SCALAR,
+            regex => qr/^(TicketBin|Ticket|Message|Changeset|Milestone)$/,
+        }
+    );
+    my $class  = 'Net::Lighthouse::Project::' . shift;
+    my $object = $class->new(
+        project_id => $self->id,
+        map { $_ => $self->$_ }
+          grep { $self->$_ } qw/account email password token/
+    );
+    return $object;
+}
+
 sub _list {
     my $self = shift;
     validate_pos(
