@@ -105,6 +105,7 @@ sub _translate_from_xml {
         }
         elsif ( $k eq 'attachments' ) {
             my $attachments = $ref->{attachments}{attachment};
+            next unless $attachments;
             $attachments = [ $attachments ] unless ref $attachments eq 'ARRAY';
             require Net::Lighthouse::Project::Ticket::Attachment;
             $ref->{attachments} = [
