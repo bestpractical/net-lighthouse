@@ -1,13 +1,13 @@
 use strict;
 use warnings;
 
-use Test::More tests => 70;
+use Test::More tests => 85;
 use Test::Mock::LWP;
 use DateTime;
 use_ok('Net::Lighthouse::Project');
 can_ok( 'Net::Lighthouse::Project', 'new' );
 
-my $project = Net::Lighthouse::Project->new;
+my $project = Net::Lighthouse::Project->new( account => 'sunnavy', id => 1 );
 isa_ok( $project, 'Net::Lighthouse::Project' );
 isa_ok( $project, 'Net::Lighthouse' );
 for my $attr (
@@ -23,14 +23,26 @@ for my $attr (
 
 for my $method (
     qw/create update delete load load_from_xml list
-    initial_state tickets ticket_bins messages milestones changesets/
+    initial_state tickets ticket_bins messages milestones changesets
+    ticket ticket_bin message milestone changeset
+    /
   )
 {
     can_ok( $project, $method );
 }
 
-$project->account('sunnavy');
+for my $method (qw/ticket ticket_bin message milestone changeset/) {
+    can_ok( $project, $method );
+    if ( $method eq 'ticket_bin' ) {
+        isa_ok( $project->$method, 'Net::Lighthouse::Project::TicketBin' );
+    }
+    else {
+        isa_ok( $project->$method,
+            'Net::Lighthouse::Project::' . ucfirst $method );
+    }
+}
 
+$project->account('sunnavy');
 $Mock_ua->mock( get            => sub { $Mock_response } );
 $Mock_ua->mock( default_header => sub { } );                  # to erase warning
 $Mock_response->mock(
