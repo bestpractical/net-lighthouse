@@ -42,7 +42,6 @@ for my $method (qw/ticket ticket_bin message milestone changeset/) {
     }
 }
 
-$project->account('sunnavy');
 $Mock_ua->mock( get            => sub { $Mock_response } );
 $Mock_ua->mock( default_header => sub { } );                  # to erase warning
 $Mock_response->mock(

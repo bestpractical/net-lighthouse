@@ -5,9 +5,15 @@ use MIME::Base64;
 use LWP::UserAgent;
 
 our $VERSION = '0.01';
-has ['account', 'email', 'password', 'token'] => (
-    isa      => 'Str',
-    is       => 'rw',
+
+has 'account' => (
+    isa => 'Str',
+    is  => 'ro',
+);
+
+has [ 'email', 'password', 'token' ] => (
+    isa => 'Str',
+    is  => 'rw',
 );
 
 no Any::Moose;

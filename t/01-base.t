@@ -6,13 +6,12 @@ use MIME::Base64;
 
 use_ok('Net::Lighthouse');
 can_ok( 'Net::Lighthouse', 'new' );
-my $lh = Net::Lighthouse->new;
+my $lh = Net::Lighthouse->new( account => 'sunnavy' );
 isa_ok( $lh, 'Net::Lighthouse' );
 for (qw/account email password token base_url ua/) {
     can_ok( $lh, $_ );
 }
 
-$lh->account('sunnavy');
 is( $lh->base_url, 'http://sunnavy.lighthouseapp.com', 'base_url' );
 isa_ok( $lh->ua, 'LWP::UserAgent' );
 is(

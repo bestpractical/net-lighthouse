@@ -7,7 +7,7 @@ use Test::Mock::LWP;
 use_ok( 'Net::Lighthouse::User' );
 can_ok( 'Net::Lighthouse::User', 'new' );
 
-my $user = Net::Lighthouse::User->new;
+my $user = Net::Lighthouse::User->new( account => 'sunnavy' );
 isa_ok( $user, 'Net::Lighthouse::User' );
 isa_ok( $user, 'Net::Lighthouse' );
 
@@ -29,7 +29,6 @@ $Mock_response->mock(
     }
 );
 
-$user->account('sunnavy');
 my $sunnavy = $user->load( 67166 );
 is( $sunnavy, $user, 'load return $self' );
 for ( qw/name id job website avatar_url/ ) {
