@@ -129,13 +129,13 @@ sub create {
             state => { optional => 1, type => SCALAR },
             assigned_user_id => {
                 optional => 1,
-                type     => SCALAR,
-                regex    => qr/^\d+$/,
+                type     => SCALAR | UNDEF,
+                regex    => qr/^(\d+|)$/,
             },
             milestone_id => {
                 optional => 1,
-                type     => SCALAR,
-                regex    => qr/^\d+$/,
+                type     => SCALAR | UNDEF,
+                regex    => qr/^(\d+|)$/,
             },
             tag => { optional => 1, type => SCALAR },
         }
@@ -175,13 +175,13 @@ sub update {
             state => { optional => 1, type => SCALAR },
             assigned_user_id => {
                 optional => 1,
-                type     => SCALAR,
-                regex    => qr/^\d+$/,
+                type     => SCALAR | UNDEF,
+                regex    => qr/^(\d+|)$/,
             },
             milestone_id => {
                 optional => 1,
-                type     => SCALAR,
-                regex    => qr/^\d+$/,
+                type     => SCALAR | UNDEF,
+                regex    => qr/^(\d+|)$/,
             },
             tag => { optional => 1, type => SCALAR },
         }
