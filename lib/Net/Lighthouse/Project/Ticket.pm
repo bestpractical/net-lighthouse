@@ -21,11 +21,11 @@ has [qw/closed /] => (
 );
 
 has [
-    'raw_data',    'user_name',
-    'state',       'permalink',
-    'versions',    'url',
-    'latest_body', 'creator_name',
-    'assigned_user_name', 'milestone_title',
+    'raw_data',     'user_name',
+    'state',        'permalink',
+    'url',          'latest_body',
+    'creator_name', 'assigned_user_name',
+    'milestone_title',
   ] => (
     isa => 'Maybe[Str]',
     is  => 'ro',
