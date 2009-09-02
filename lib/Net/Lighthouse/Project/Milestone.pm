@@ -31,8 +31,21 @@ __PACKAGE__->meta->make_immutable;
 
 sub load {
     my $self = shift;
-    validate_pos( @_, { type => SCALAR, regex => qr/^\d+$/ } );
+    validate_pos( @_, { type => SCALAR, regex => qr/^\d+|\w+$/ } );
     my $id = shift;
+
+    if ( $id !~ /^\d+$/ ) {
+
+        # so we got a title, let's find it
+        my ($milestone) = grep { $_->title eq $id } $self->list;
+        if ($milestone) {
+            $id = $milestone->id;
+        }
+        else {
+            die "can't find milestone $id in account " . $self->account;
+        }
+    }
+
     my $ua = $self->ua;
     my $url =
         $self->base_url
