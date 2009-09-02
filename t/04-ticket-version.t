@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 47;
+use Test::More tests => 48;
 use DateTime;
 use_ok('Net::Lighthouse::Project::Ticket::Version');
 can_ok( 'Net::Lighthouse::Project::Ticket::Version', 'new' );
@@ -20,7 +20,7 @@ my @attrs = (
     'title',              'updated_at',
     'user_id',            'user_name',
     'creator_name',       'url',
-    'diffable_attributes',
+    'diffable_attributes', 'milestone_title',
 );
 
 for my $attr (@attrs) {

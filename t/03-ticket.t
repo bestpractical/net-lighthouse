@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 70;
+use Test::More tests => 71;
 use Test::Mock::LWP;
 use DateTime;
 use_ok('Net::Lighthouse::Project');
@@ -25,6 +25,7 @@ my @attrs = (
     'attachments_count',  'assigned_user_id',
     'assigned_user_name', 'creator_id',
     'title',              'creator_name',
+    'milestone_title',
 );
 
 for my $attr (@attrs) {

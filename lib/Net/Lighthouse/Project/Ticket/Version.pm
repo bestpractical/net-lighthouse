@@ -34,7 +34,7 @@ has [
     'state',              'tag',
     'title',              'user_id',
     'user_name',          'creator_name',
-    'url',
+    'url', 'milestone_title',
   ] => (
     isa => 'Maybe[Str]',
     is  => 'ro',

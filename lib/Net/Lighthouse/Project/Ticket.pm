@@ -25,7 +25,7 @@ has [
     'state',       'permalink',
     'versions',    'url',
     'latest_body', 'creator_name',
-    'assigned_user_name',
+    'assigned_user_name', 'milestone_title',
   ] => (
     isa => 'Maybe[Str]',
     is  => 'ro',
