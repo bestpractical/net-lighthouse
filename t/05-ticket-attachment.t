@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 27;
+use Test::More tests => 29;
 use DateTime;
 
 use_ok('Net::Lighthouse::Project::Ticket::Attachment');
@@ -13,7 +13,8 @@ isa_ok( $attachment, 'Net::Lighthouse::Project::Ticket::Attachment' );
 my @attrs = (
     'width',        'created_at',  'height',   'size',
     'content_type', 'uploader_id', 'filename', 'url',
-    'type',         'id',          'code'
+    'type',         'id',          'code',
+    'content', 'ua',
 );
 
 for my $attr (@attrs) {

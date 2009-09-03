@@ -20,6 +20,24 @@ has [ 'content_type', 'filename', 'url', 'type', 'code' ] => (
     is  => 'ro',
 );
 
+has 'ua' => ( is => 'ro', );
+
+has 'content' => (
+    is      => 'ro',
+    lazy    => 1,
+    default => sub {
+        my $self = shift;
+        my $ua   = $self->ua;
+        my $res  = $ua->get( $self->url );
+        if ( $res->is_success ) {
+            return $res->content;
+        }
+        else {
+            return;
+        }
+    }
+);
+
 no Any::Moose;
 __PACKAGE__->meta->make_immutable;
 
