@@ -104,15 +104,27 @@ sub _translate_from_xml {
             ];
         }
         elsif ( $k eq 'attachments' ) {
-            my $attachments = $ref->{attachments}{attachment};
-            next unless $attachments;
-            $attachments = [ $attachments ] unless ref $attachments eq 'ARRAY';
+            my @attachments;
+            for ( keys %{$ref->{attachments}} ) {
+                my $att = $ref->{attachments}{$_};
+                next unless ref $att;
+                if ( ref $att eq 'ARRAY' ) {
+                    push @attachments, @{$att};
+                }
+                else {
+                    push @attachments, $att;
+                }
+            }
+            next unless @attachments;
+
             require Net::Lighthouse::Project::Ticket::Attachment;
             $ref->{attachments} = [
                 map {
-                    my $v = Net::Lighthouse::Project::Ticket::Attachment->new;
+                    my $v =
+                      Net::Lighthouse::Project::Ticket::Attachment->new(
+                        ua => $self->ua );
                     $v->load_from_xml($_)
-                  } @$attachments
+                  } @attachments
             ];
         }
     }

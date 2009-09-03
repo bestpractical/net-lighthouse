@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 71;
+use Test::More tests => 72;
 use Test::Mock::LWP;
 use DateTime;
 use_ok('Net::Lighthouse::Project');
@@ -69,7 +69,7 @@ my %hash = (
         second => 50,
     ),
     'assigned_user_id'  => 67166,
-    'attachments_count' => 1,
+    'attachments_count' => 2,
     'url'        => 'http://sunnavy.lighthouseapp.com/projects/35918/tickets/1',
     'tag'        => 'first',
     'creator_id' => 67166,
@@ -101,9 +101,11 @@ for my $k ( keys %hash ) {
 is( @{$n1->versions}, 1, 'version number' );
 isa_ok( $n1->versions->[0], 'Net::Lighthouse::Project::Ticket::Version' );
 is( $n1->versions->[0]->creator_id, 67166, 'version creator_id' );
-is( @{$n1->attachments}, 1, 'attachment number' );
+is( @{$n1->attachments}, 2, 'attachment number' );
 isa_ok( $n1->attachments->[0], 'Net::Lighthouse::Project::Ticket::Attachment' );
 is( $n1->attachments->[0]->filename, 'first', 'attachment filename' );
+is( $n1->attachments->[1]->content_type,
+    'image/jpeg', 'attachment content type' );
 
 $Mock_response->mock(
     content => sub {
