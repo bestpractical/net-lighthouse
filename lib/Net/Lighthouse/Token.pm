@@ -1,8 +1,8 @@
 package Net::Lighthouse::Token;
 use Any::Moose;
-use XML::Simple;
 use Params::Validate ':all';
 use Net::Lighthouse::Util;
+use base 'Net::Lighthouse';
 
 # read only attr
 has 'created_at' => (
@@ -37,6 +37,24 @@ has [ 'account', 'note' ] => (
 
 no Any::Moose;
 __PACKAGE__->meta->make_immutable;
+
+sub load {
+    my $self = shift;
+    validate_pos( @_, { type => SCALAR, regex => qr/^\w{40}$/ } );
+    my $token = shift;
+
+    my $ua = $self->ua;
+    my $url = $self->base_url . '/tokens/' . $token . '.xml';
+    my $res = $ua->get( $url );
+    if ( $res->is_success ) {
+        $self->load_from_xml( $res->content );
+    }
+    else {
+        die "try to get $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
+}
 
 sub load_from_xml {
     my $self = shift;

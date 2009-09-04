@@ -1,13 +1,14 @@
 use strict;
 use warnings;
 
-use Test::More tests => 19;
+use Test::More tests => 20;
 use DateTime;
+use Test::Mock::LWP;
 
 use_ok('Net::Lighthouse::Token');
 can_ok( 'Net::Lighthouse::Token', 'new' );
 
-my $token = Net::Lighthouse::Token->new;
+my $token = Net::Lighthouse::Token->new( account => 'sunnavy' );
 isa_ok( $token, 'Net::Lighthouse::Token' );
 
 for my $attr (
@@ -18,14 +19,22 @@ for my $attr (
     can_ok( $token, $attr );
 }
 
-can_ok( $token, 'load_from_xml' );
+for my $method ( qw/load load_from_xml/ ) {
+    can_ok( $token, $method );
+}
 
-my $xml = do {
-    local $/;
-    open my $fh, '<', 't/data/token.xml' or die $!;
-    <$fh>;
-};
-my $m = $token->load_from_xml($xml);
+$Mock_ua->mock( get            => sub { $Mock_response } );
+$Mock_ua->mock( default_header => sub { } );                  # to erase warning
+$Mock_response->mock(
+    content => sub {
+        local $/;
+        open my $fh, '<', 't/data/token.xml' or die $!;
+        <$fh>;
+    }
+);
+
+my $m = $token->load('a'x40);
+
 is( $m, $token, 'load return $self' );
 my %hash = (
     'created_at' => DateTime->new(
