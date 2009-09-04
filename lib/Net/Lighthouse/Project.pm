@@ -237,11 +237,11 @@ sub initial_state {
     }
 }
 
-sub tickets { return shift->_list( 'Ticket' ) }
-sub ticket_bins { return shift->_list( 'TicketBin' ) }
-sub messages { return shift->_list( 'Message' ) }
-sub milestones { return shift->_list( 'Milestone' ) }
-sub changesets { return shift->_list( 'Changeset' ) }
+sub tickets { return shift->_list( 'Ticket', @_ ) }
+sub ticket_bins { return shift->_list( 'TicketBin', @_ ) }
+sub messages { return shift->_list( 'Message', @_ ) }
+sub milestones { return shift->_list( 'Milestone', @_ ) }
+sub changesets { return shift->_list( 'Changeset', @_ ) }
 
 sub ticket { return shift->_new( 'Ticket' ) }
 sub ticket_bin { return shift->_new( 'TicketBin' ) }
@@ -274,7 +274,8 @@ sub _list {
         {
             type  => SCALAR,
             regex => qr/^(TicketBin|Ticket|Message|Changeset|Milestone)$/,
-        }
+        },
+        (0)x(@_-1)
     );
     my $class  = 'Net::Lighthouse::Project::' . shift;
     my $object = $class->new(
