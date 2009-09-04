@@ -12,6 +12,7 @@ requires 'LWP';
 requires 'MIME::Base64';
 requires 'YAML::Syck';
 requires 'DateTime';
+requires 'URI::Escape';
 
 test_requires 'Test::More';
 test_requires 'Test::Mock::LWP';
