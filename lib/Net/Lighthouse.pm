@@ -10,6 +10,36 @@ use base 'Net::Lighthouse::Base';
 
 our $VERSION = '0.01';
 
+sub project { return shift->_new( 'Project' ) }
+sub user { return shift->_new( 'User' ) }
+sub token { return shift->_new( 'Token' ) }
+
+sub _new {
+    my $self = shift;
+    validate_pos(
+        @_,
+        {
+            type  => SCALAR,
+            regex => qr/^(Project|Token|User)$/,
+        }
+    );
+    my $class  = 'Net::Lighthouse::' . shift;
+    my $object = $class->new(
+        map { $_ => $self->$_ }
+          grep { $self->$_ } qw/account auth/
+    );
+    return $object;
+}
+
+sub projects {
+    my $self   = shift;
+    my $object = Net::Lighthouse::Project->new(
+        map { $_ => $self->$_ }
+          grep { $self->$_ } qw/account auth/
+    );
+    return $object->list(@_);
+}
+
 1;
 
 __END__
