@@ -11,7 +11,7 @@ can_ok( 'Net::Lighthouse::Project::Message', 'new' );
 
 my $message = Net::Lighthouse::Project::Message->new;
 isa_ok( $message, 'Net::Lighthouse::Project::Message' );
-isa_ok( $message, 'Net::Lighthouse' );
+isa_ok( $message, 'Net::Lighthouse::Base' );
 
 my @attrs = (
     'created_at',        'comments',

@@ -11,7 +11,7 @@ can_ok( 'Net::Lighthouse::Project::Changeset', 'new' );
 
 my $changeset = Net::Lighthouse::Project::Changeset->new;
 isa_ok( $changeset, 'Net::Lighthouse::Project::Changeset' );
-isa_ok( $changeset, 'Net::Lighthouse' );
+isa_ok( $changeset, 'Net::Lighthouse::Base' );
 
 my @attrs = (
     'body',    'revision', 'project_id', 'changed_at',

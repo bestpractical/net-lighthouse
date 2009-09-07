@@ -11,7 +11,7 @@ can_ok( 'Net::Lighthouse::Project::Milestone', 'new' );
 
 my $milestone = Net::Lighthouse::Project::Milestone->new;
 isa_ok( $milestone, 'Net::Lighthouse::Project::Milestone' );
-isa_ok( $milestone, 'Net::Lighthouse' );
+isa_ok( $milestone, 'Net::Lighthouse::Base' );
 
 my @attrs = (
     'open_tickets_count', 'created_at',

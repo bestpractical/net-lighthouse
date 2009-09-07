@@ -3,7 +3,7 @@ use Any::Moose;
 use XML::Simple;
 use Params::Validate ':all';
 use Net::Lighthouse::Util;
-extends 'Net::Lighthouse';
+extends 'Net::Lighthouse::Base';
 # read only attr
 
 has [qw/project_id user_id/] => (

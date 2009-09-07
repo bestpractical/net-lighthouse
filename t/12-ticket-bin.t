@@ -11,7 +11,7 @@ can_ok( 'Net::Lighthouse::Project::TicketBin', 'new' );
 
 my $bin = Net::Lighthouse::Project::TicketBin->new;
 isa_ok( $bin, 'Net::Lighthouse::Project::TicketBin' );
-isa_ok( $bin, 'Net::Lighthouse' );
+isa_ok( $bin, 'Net::Lighthouse::Base' );
 
 my @attrs = (
     'query',      'user_id', 'position',   'name',

@@ -9,7 +9,7 @@ use Net::Lighthouse::Project::Milestone;
 use Net::Lighthouse::Project::Message;
 use Net::Lighthouse::Project::Changeset;
 
-extends 'Net::Lighthouse';
+extends 'Net::Lighthouse::Base';
 # read only attr
 
 has [qw/created_at updated_at/] => (

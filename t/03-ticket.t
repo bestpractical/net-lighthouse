@@ -10,7 +10,7 @@ can_ok( 'Net::Lighthouse::Project::Ticket', 'new' );
 
 my $ticket = Net::Lighthouse::Project::Ticket->new;
 isa_ok( $ticket, 'Net::Lighthouse::Project::Ticket' );
-isa_ok( $ticket, 'Net::Lighthouse' );
+isa_ok( $ticket, 'Net::Lighthouse::Base' );
 
 my @attrs = (
     'priority',           'raw_data',

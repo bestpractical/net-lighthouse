@@ -9,7 +9,7 @@ can_ok( 'Net::Lighthouse::Project', 'new' );
 
 my $project = Net::Lighthouse::Project->new( account => 'sunnavy', id => 1 );
 isa_ok( $project, 'Net::Lighthouse::Project' );
-isa_ok( $project, 'Net::Lighthouse' );
+isa_ok( $project, 'Net::Lighthouse::Base' );
 for my $attr (
     qw/archived created_at default_assigned_user_id
     default_milestone_id description description_html hidden

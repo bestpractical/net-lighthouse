@@ -2,7 +2,7 @@ package Net::Lighthouse::Token;
 use Any::Moose;
 use Params::Validate ':all';
 use Net::Lighthouse::Util;
-use base 'Net::Lighthouse';
+extends 'Net::Lighthouse::Base';
 
 # read only attr
 has 'created_at' => (

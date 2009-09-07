@@ -9,7 +9,7 @@ can_ok( 'Net::Lighthouse::User', 'new' );
 
 my $user = Net::Lighthouse::User->new( account => 'sunnavy' );
 isa_ok( $user, 'Net::Lighthouse::User' );
-isa_ok( $user, 'Net::Lighthouse' );
+isa_ok( $user, 'Net::Lighthouse::Base' );
 
 for my $attr( qw/id name job name website avatar_url/ ) {
     can_ok( $user, $attr );

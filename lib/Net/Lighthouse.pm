@@ -1,45 +1,14 @@
 package Net::Lighthouse;
 
-use Any::Moose;
 use MIME::Base64;
 use LWP::UserAgent;
+use Params::Validate ':all';
+use Net::Lighthouse::Project;
+use Net::Lighthouse::Token;
+use Net::Lighthouse::User;
+use base 'Net::Lighthouse::Base';
 
 our $VERSION = '0.01';
-
-has 'account' => (
-    isa => 'Str',
-    is  => 'ro',
-);
-
-has [ 'email', 'password', 'token' ] => (
-    isa => 'Str',
-    is  => 'rw',
-);
-
-no Any::Moose;
-__PACKAGE__->meta->make_immutable;
-
-sub base_url {
-    my $self = shift;
-    return 'http://' . $self->account . '.lighthouseapp.com';
-}
-
-sub ua {
-    my $self = shift;
-    my $ua = LWP::UserAgent->new( agent => 'net-lighthouse/' . $VERSION );
-    $ua->default_header( 'Content-Type' => 'application/xml' );
-    # email and password have high priority
-    if ( $self->email && $self->password ) {
-        my $base64 = encode_base64( $self->email . ':' . $self->password );
-        chomp $base64;
-        $ua->default_header( Authorization => 'Basic ' . $base64 );
-    }
-    elsif ( $self->token ) {
-        $ua->default_header( 'X-LighthouseToken', $self->token );
-    }
-
-    return $ua;
-}
 
 1;
 
