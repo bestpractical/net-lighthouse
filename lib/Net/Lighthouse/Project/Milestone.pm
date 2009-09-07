@@ -181,7 +181,7 @@ sub list {
         return map {
             my $t = Net::Lighthouse::Project::Milestone->new(
                 map { $_ => $self->$_ }
-                  grep { $self->$_ } qw/account email password token project_id/
+                  grep { $self->$_ } qw/account auth project_id/
             );
             $t->load_from_xml($_);
         } @$ts;

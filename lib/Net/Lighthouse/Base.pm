@@ -9,9 +9,11 @@ has 'account' => (
     is  => 'ro',
 );
 
-has [ 'email', 'password', 'token' ] => (
-    isa => 'Str',
-    is  => 'rw',
+has 'auth' => (
+    isa     => 'HashRef',
+    is      => 'rw',
+    default => sub { {} },
+    lazy    => 1,
 );
 
 no Any::Moose;
@@ -30,13 +32,14 @@ sub ua {
         agent => 'net-lighthouse/' . $Net::Lighthouse::VERSION );
     $ua->default_header( 'Content-Type' => 'application/xml' );
     # email and password have high priority
-    if ( $self->email && $self->password ) {
-        my $base64 = encode_base64( $self->email . ':' . $self->password );
+    my $auth = $self->auth;
+    if ( $auth->{email} && $auth->{password} ) {
+        my $base64 = encode_base64( $auth->{email} . ':' . $auth->{password} );
         chomp $base64;
         $ua->default_header( Authorization => 'Basic ' . $base64 );
     }
-    elsif ( $self->token ) {
-        $ua->default_header( 'X-LighthouseToken', $self->token );
+    elsif ( $auth->{token} ) {
+        $ua->default_header( 'X-LighthouseToken', $auth->{token} );
     }
 
     return $ua;

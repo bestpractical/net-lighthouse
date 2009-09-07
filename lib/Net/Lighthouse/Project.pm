@@ -209,7 +209,7 @@ sub list {
         return map {
             my $p = Net::Lighthouse::Project->new(
                 map { $_ => $self->$_ }
-                  grep { $self->$_ } qw/account email password token/
+                  grep { $self->$_ } qw/account auth/
             );
             $p->load_from_xml($_);
         } @$ps;
@@ -262,7 +262,7 @@ sub _new {
     my $object = $class->new(
         project_id => $self->id,
         map { $_ => $self->$_ }
-          grep { $self->$_ } qw/account email password token/
+          grep { $self->$_ } qw/account auth/
     );
     return $object;
 }
@@ -281,7 +281,7 @@ sub _list {
     my $object = $class->new(
         project_id => $self->id,
         map { $_ => $self->$_ }
-          grep { $self->$_ } qw/account email password token/
+          grep { $self->$_ } qw/account auth/
     );
     return $object->list(@_);
 }
