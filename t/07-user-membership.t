@@ -21,7 +21,7 @@ my $xml = do {
     <$fh>;
 };
 my $m = $ms->load_from_xml($xml);
-is( $m, $ms, 'load return $self' );
+is( $m, $ms, 'load returns $self' );
 my %hash = (
         id => 69274,
         user_id => 67166,

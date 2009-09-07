@@ -54,7 +54,7 @@ $Mock_response->mock(
 
 my $sd = Net::Lighthouse::Project->new( account => 'sunnavy' );
 my $load = $sd->load(35918);
-is( $sd, $load, 'load return $self' );
+is( $sd, $load, 'load returns $self' );
 
 my %hash = (
     'description_html' => '<div><p>test for sd</p></div>',
@@ -132,9 +132,9 @@ is( scalar @projects, 2,     'number of projects' );
 is( $projects[0]->id, 35918, 'id of 2nd project' );
 is( $projects[1]->id, 36513, 'id of 2nd project' );
 is_deeply( $projects[0], $sd,
-    'load and list should return the same info for one project' );
+    'load and list returns the same info for one project' );
 
-is_deeply( scalar $p->list, \@projects, 'list return array ref in scalar context' );
+is_deeply( scalar $p->list, \@projects, 'list returns array ref in scalar context' );
 
 # test for initial_state
 $Mock_response->mock(

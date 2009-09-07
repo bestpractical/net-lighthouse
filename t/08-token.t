@@ -35,7 +35,7 @@ $Mock_response->mock(
 
 my $m = $token->load('a'x40);
 
-is( $m, $token, 'load return $self' );
+is( $m, $token, 'load returns $self' );
 my %hash = (
     'created_at' => DateTime->new(
         year   => 2007,

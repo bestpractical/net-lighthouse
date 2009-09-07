@@ -42,7 +42,7 @@ my $n1 = Net::Lighthouse::Project::Changeset->new(
     project_id => 2,
 );
 my $load = $n1->load(1);
-is( $load, $n1, 'load return $self' );
+is( $load, $n1, 'load returns $self' );
 my %hash = (
                  'account' => 'sunnavy',
                  'body' => '#{unprocessed body}',
@@ -85,7 +85,7 @@ $changeset = Net::Lighthouse::Project::Changeset->new(
 my @list = $changeset->list;
 is( scalar @list, 1, 'list number' );
 is( $list[0]->revision, 983, '1st changeset number' );
-is_deeply( scalar $changeset->list, \@list, 'list return array ref in scalar context' );
+is_deeply( scalar $changeset->list, \@list, 'list returns array ref in scalar context' );
 
 # test initial_state
 $Mock_response->mock(

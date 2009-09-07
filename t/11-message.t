@@ -49,7 +49,7 @@ my $m1 = Net::Lighthouse::Project::Message->new(
     project_id => 35198,
 );
 my $load = $m1->load(20298);
-is( $load, $m1, 'load return $self' );
+is( $load, $m1, 'load returns $self' );
 my %hash = (
     'permalink'         => '1st-message',
     'parent_id'         => undef,
@@ -107,7 +107,7 @@ $message = Net::Lighthouse::Project::Message->new(
 my @list = $message->list;
 is( scalar @list, 1, 'list number' );
 is( $list[0]->id, 20298, 'message id' );
-is_deeply( scalar $message->list, \@list, 'list return array ref in scalar context' );
+is_deeply( scalar $message->list, \@list, 'list returns array ref in scalar context' );
 
 # test initial_state
 $Mock_response->mock(

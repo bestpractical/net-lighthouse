@@ -35,7 +35,7 @@ my $xml = do {
     <$fh>;
 };
 my $v1 = $version->load_from_xml($xml);
-is( $v1, $version, 'load return $self' );
+is( $v1, $version, 'load returns $self' );
 
 my %hash = (
     'number'            => 1,

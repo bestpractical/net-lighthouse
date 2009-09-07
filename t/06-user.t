@@ -30,7 +30,7 @@ $Mock_response->mock(
 );
 
 my $sunnavy = $user->load( 67166 );
-is( $sunnavy, $user, 'load return $self' );
+is( $sunnavy, $user, 'load returns $self' );
 for ( qw/name id job website avatar_url/ ) {
 
 }

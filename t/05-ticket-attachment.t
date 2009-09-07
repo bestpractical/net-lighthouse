@@ -29,7 +29,7 @@ my $xml = do {
     <$fh>;
 };
 my $v1 = $attachment->load_from_xml($xml);
-is( $v1, $attachment, 'load return $self' );
+is( $v1, $attachment, 'load returns $self' );
 my %hash = (
     'width'        => undef,
     'uploader_id'  => 67166,

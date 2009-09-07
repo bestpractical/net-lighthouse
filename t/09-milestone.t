@@ -47,7 +47,7 @@ my $n1 = Net::Lighthouse::Project::Milestone->new(
     project_id => 35918,
 );
 my $load = $n1->load(1);
-is( $load, $n1, 'load return $self' );
+is( $load, $n1, 'load returns $self' );
 my %hash = (
     'account'            => 'sunnavy',
     'due_on' => DateTime->new(
@@ -103,7 +103,7 @@ $milestone = Net::Lighthouse::Project::Milestone->new(
 my @list = $milestone->list;
 is( scalar @list, 1, 'list number' );
 is( $list[0]->id, 48761, '1st milestone number' );
-is_deeply( scalar $milestone->list, \@list, 'list return array ref in scalar context' );
+is_deeply( scalar $milestone->list, \@list, 'list returns array ref in scalar context' );
 
 # test initial_state
 $Mock_response->mock(

@@ -42,7 +42,7 @@ my $b1 = Net::Lighthouse::Project::TicketBin->new(
     project_id => 35918,
 );
 my $load = $b1->load(48889);
-is( $load, $b1, 'load return $self' );
+is( $load, $b1, 'load returns $self' );
 my %hash = (
     'query'         => 'state:open',
     'account'       => 'sunnavy',
@@ -83,5 +83,5 @@ $bin = Net::Lighthouse::Project::TicketBin->new(
 my @list = $bin->list;
 is( scalar @list, 3, 'list number' );
 is( $list[0]->id, 48889, '1st bin number' );
-is_deeply( scalar $bin->list, \@list, 'list return array ref in scalar context' );
+is_deeply( scalar $bin->list, \@list, 'list returns array ref in scalar context' );
 
