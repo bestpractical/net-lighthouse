@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 72;
+use Test::More tests => 75;
 use Test::Mock::LWP;
 use DateTime;
 use_ok('Net::Lighthouse::Project');
@@ -99,9 +99,12 @@ for my $k ( keys %hash ) {
 }
 
 is( @{$n1->versions}, 1, 'version number' );
+is_deeply( scalar $n1->versions, [ $n1->versions ], 'versions return arrayref in scalar context' );
 isa_ok( $n1->versions->[0], 'Net::Lighthouse::Project::Ticket::Version' );
 is( $n1->versions->[0]->creator_id, 67166, 'version creator_id' );
+
 is( @{$n1->attachments}, 2, 'attachment number' );
+is_deeply( scalar $n1->attachments, [ $n1->attachments ], 'attachments return arrayref in scalar context' );
 isa_ok( $n1->attachments->[0], 'Net::Lighthouse::Project::Ticket::Attachment' );
 is( $n1->attachments->[0]->filename, 'first', 'attachment filename' );
 is( $n1->attachments->[1]->content_type,
@@ -123,6 +126,7 @@ my @list = $ticket->list;
 is( scalar @list, 2, 'list number' );
 is( $list[0]->number, 2, '1st ticket number' );
 is( $list[1]->number, 1, '1st ticket number' );
+is_deeply( scalar $ticket->list, \@list, 'list return array ref in scalar context' );
 
 # test initial_state
 $Mock_response->mock(

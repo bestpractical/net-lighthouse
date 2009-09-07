@@ -205,14 +205,15 @@ sub list {
     my $res = $ua->get( $url );
     if ( $res->is_success ) {
         my $ps = XMLin( $res->content, KeyAttr => [] )->{project};
-        $ps = [ $ps ] unless ref $ps eq 'ARRAY';
-        return map {
+        $ps = [$ps] unless ref $ps eq 'ARRAY';
+        my @list = map {
             my $p = Net::Lighthouse::Project->new(
                 map { $_ => $self->$_ }
                   grep { $self->$_ } qw/account auth/
             );
             $p->load_from_xml($_);
-        } @$ps;
+        } ref $ps eq 'ARRAY' ? @$ps : $ps;
+        return wantarray ? @list : \@list;
     }
     else {
         die "try to get $url failed: "

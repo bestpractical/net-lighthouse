@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 43;
+use Test::More tests => 44;
 use Test::Mock::LWP;
 use DateTime;
 
@@ -103,6 +103,7 @@ $milestone = Net::Lighthouse::Project::Milestone->new(
 my @list = $milestone->list;
 is( scalar @list, 1, 'list number' );
 is( $list[0]->id, 48761, '1st milestone number' );
+is_deeply( scalar $milestone->list, \@list, 'list return array ref in scalar context' );
 
 # test initial_state
 $Mock_response->mock(

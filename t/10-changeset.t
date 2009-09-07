@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 32;
+use Test::More tests => 33;
 use Test::Mock::LWP;
 use DateTime;
 
@@ -85,6 +85,7 @@ $changeset = Net::Lighthouse::Project::Changeset->new(
 my @list = $changeset->list;
 is( scalar @list, 1, 'list number' );
 is( $list[0]->revision, 983, '1st changeset number' );
+is_deeply( scalar $changeset->list, \@list, 'list return array ref in scalar context' );
 
 # test initial_state
 $Mock_response->mock(

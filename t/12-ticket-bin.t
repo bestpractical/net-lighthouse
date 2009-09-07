@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 35;
+use Test::More tests => 36;
 use Test::Mock::LWP;
 use DateTime;
 
@@ -83,4 +83,5 @@ $bin = Net::Lighthouse::Project::TicketBin->new(
 my @list = $bin->list;
 is( scalar @list, 3, 'list number' );
 is( $list[0]->id, 48889, '1st bin number' );
+is_deeply( scalar $bin->list, \@list, 'list return array ref in scalar context' );
 

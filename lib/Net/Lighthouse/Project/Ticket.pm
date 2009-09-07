@@ -32,13 +32,20 @@ has [
   );
 
 has 'attachments' => (
-    isa => 'ArrayRef[Net::Lighthouse::Project::Ticket::Attachment]',
-    is  => 'ro',
+# TODO Mouse doesn't treat ArrayRef[Net::Lighthouse::Project::Ticket::Attachment]
+# as ArrayRef :/ it's a bug I think
+
+#    isa        => 'ArrayRef[Net::Lighthouse::Project::Ticket::Attachment]',
+    isa        => 'ArrayRef',
+    is         => 'ro',
+    auto_deref => 1,
 );
 
 has 'versions' => (
-    isa => 'ArrayRef[Net::Lighthouse::Project::Ticket::Version]',
-    is  => 'ro',
+#    isa        => 'ArrayRef[Net::Lighthouse::Project::Ticket::Version]',
+    isa        => 'ArrayRef',
+    is         => 'ro',
+    auto_deref => 1,
 );
 
 # read&write attr
@@ -272,14 +279,14 @@ sub list {
     my $res = $ua->get($url);
     if ( $res->is_success ) {
         my $ts = XMLin( $res->content, KeyAttr => [] )->{ticket};
-        $ts = [ $ts ] unless ref $ts eq 'ARRAY';
-        return map {
+        my @list = map {
             my $t = Net::Lighthouse::Project::Ticket->new(
                 map { $_ => $self->$_ }
                   grep { $self->$_ } qw/account auth project_id/
             );
             $t->load_from_xml($_);
-        } @$ts;
+        } ref $ts eq 'ARRAY' ? @$ts : $ts;
+        return wantarray ? @list : \@list;
     }
     else {
         die "try to get $url failed: "

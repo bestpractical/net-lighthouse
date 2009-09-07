@@ -133,15 +133,15 @@ sub list {
     my $ua  = $self->ua;
     my $res = $ua->get($url);
     if ( $res->is_success ) {
-        my $ts = XMLin( $res->content, KeyAttr => [] )->{changeset};
-        $ts = [ $ts ] unless ref $ts eq 'ARRAY';
-        return map {
+        my $cs = XMLin( $res->content, KeyAttr => [] )->{changeset};
+        my @list = map {
             my $t = Net::Lighthouse::Project::Changeset->new(
                 map { $_ => $self->$_ }
                   grep { $self->$_ } qw/account auth project_id/
             );
             $t->load_from_xml($_);
-        } @$ts;
+        } ref $cs eq 'ARRAY' ? @$cs : $cs;
+        return wantarray ? @list : \@list;
     }
     else {
         die "try to get $url failed: "

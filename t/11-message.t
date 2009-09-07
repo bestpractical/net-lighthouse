@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 53;
+use Test::More tests => 54;
 use Test::Mock::LWP;
 use DateTime;
 
@@ -107,6 +107,7 @@ $message = Net::Lighthouse::Project::Message->new(
 my @list = $message->list;
 is( scalar @list, 1, 'list number' );
 is( $list[0]->id, 20298, 'message id' );
+is_deeply( scalar $message->list, \@list, 'list return array ref in scalar context' );
 
 # test initial_state
 $Mock_response->mock(

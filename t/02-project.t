@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 85;
+use Test::More tests => 86;
 use Test::Mock::LWP;
 use DateTime;
 use_ok('Net::Lighthouse::Project');
@@ -133,6 +133,8 @@ is( $projects[0]->id, 35918, 'id of 2nd project' );
 is( $projects[1]->id, 36513, 'id of 2nd project' );
 is_deeply( $projects[0], $sd,
     'load and list should return the same info for one project' );
+
+is_deeply( scalar $p->list, \@projects, 'list return array ref in scalar context' );
 
 # test for initial_state
 $Mock_response->mock(
