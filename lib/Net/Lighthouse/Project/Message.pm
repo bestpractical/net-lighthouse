@@ -24,8 +24,9 @@ has [ 'body_html', 'user_name', 'permalink', 'url', ] => (
 );
 
 has 'comments' => (
-    isa => 'ArrayRef[Net::Lighthouse::Project::Message]',
-    is  => 'ro',
+    isa        => 'ArrayRef[Net::Lighthouse::Project::Message]',
+    is         => 'ro',
+    auto_deref => 1,
 );
 
 # read&write attr

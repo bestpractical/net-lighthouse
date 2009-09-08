@@ -32,18 +32,13 @@ has [
   );
 
 has 'attachments' => (
-# TODO Mouse doesn't treat ArrayRef[Net::Lighthouse::Project::Ticket::Attachment]
-# as ArrayRef :/ it's a bug I think
-
-#    isa        => 'ArrayRef[Net::Lighthouse::Project::Ticket::Attachment]',
-    isa        => 'ArrayRef',
+    isa        => 'ArrayRef[Net::Lighthouse::Project::Ticket::Attachment]',
     is         => 'ro',
     auto_deref => 1,
 );
 
 has 'versions' => (
-#    isa        => 'ArrayRef[Net::Lighthouse::Project::Ticket::Version]',
-    isa        => 'ArrayRef',
+    isa        => 'ArrayRef[Net::Lighthouse::Project::Ticket::Version]',
     is         => 'ro',
     auto_deref => 1,
 );

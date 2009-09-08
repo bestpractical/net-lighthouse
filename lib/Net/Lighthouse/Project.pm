@@ -17,10 +17,12 @@ has [qw/created_at updated_at/] => (
     is  => 'ro',
 );
 
-has [ qw/ open_states_list closed_states_list open_states closed_states / ] => (
-    isa => 'ArrayRef',
-    is  => 'ro',
-  );
+has [qw/ open_states_list closed_states_list open_states closed_states /] => (
+    isa        => 'ArrayRef',
+    is         => 'ro',
+    auto_deref => 1,
+);
+
 has [
     qw/default_assigned_user_id default_milestone_id id open_tickets_count /] =>
   (

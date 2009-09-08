@@ -23,8 +23,9 @@ has 'changed_at' => (
 );
 
 has 'changes' => (
-    isa => 'ArrayRef',
-    is  => 'rw',
+    isa        => 'ArrayRef',
+    is         => 'rw',
+    auth_deref => 1,
 );
 
 has [qw/body title revision/] => (
