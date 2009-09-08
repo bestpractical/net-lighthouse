@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 20;
+use Test::More tests => 26;
 use Test::Mock::LWP;
 
 use_ok( 'Net::Lighthouse::User' );
@@ -47,3 +47,25 @@ for my $attr ( keys %hash ) {
     is( $user->$attr, $hash{$attr}, "$attr is loaded" );
 }
 
+
+# test memberships
+$Mock_response->mock(
+    content => sub {
+        local $/;
+        open my $fh, '<', 't/data/user_67166_memberships.xml' or die $!;
+        <$fh>
+    }
+);
+my $memberships = $user->memberships;
+is( scalar @$memberships, 1, 'we got 1 membership' );
+isa_ok( $memberships->[0], 'Net::Lighthouse::User::Membership' );
+%hash = (
+    'account' => 'http://sunnavy.lighthouseapp.com',
+    'user_id' => '67166',
+    'id'      => '69274',
+    project   => undef,
+);
+
+for my $attr ( keys %hash ) {
+    is( $memberships->[0]->$attr, $hash{$attr}, "$attr is loaded" );
+}
