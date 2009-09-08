@@ -115,7 +115,7 @@ my %hash = (
 );
 
 for my $k ( keys %hash ) {
-    is_deeply( $sd->$k, $hash{$k}, "$k is loaded" );
+    is_deeply( scalar $sd->$k, $hash{$k}, "$k is loaded" );
 }
 
 $Mock_response->mock(
