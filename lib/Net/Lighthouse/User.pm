@@ -93,6 +93,23 @@ sub update {
 
 sub memberships {
     my $self = shift;
+    my $ua   = $self->ua;
+    my $url  = $self->base_url . '/users/' . $self->id . '/memberships.xml';
+    my $res  = $ua->get($url);
+    require Net::Lighthouse::User::Membership;
+    if ( $res->is_success ) {
+        my $ms = XMLin( $res->content, KeyAttr => [] )->{membership};
+        my @list = map {
+            my $m = Net::Lighthouse::User::Membership->new;
+            $m->load_from_xml($_);
+        } ref $ms eq 'ARRAY' ? @$ms : $ms;
+        return wantarray ? @list : \@list;
+    }
+    else {
+        die "try to get $url failed: "
+          . $res->status_line . "\n"
+          . $res->content;
+    }
 }
 
 1;
