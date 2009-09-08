@@ -37,8 +37,24 @@ __PACKAGE__->meta->make_immutable;
 
 sub load {
     my $self = shift;
-    validate_pos( @_, { type => SCALAR, regex => qr/^\d+$/ } );
+    validate_pos( @_, { type => SCALAR, regex => qr/^\d+|\w+$/ } );
     my $id = shift;
+
+    if ( $id !~ /^\d+$/ ) {
+
+        # so we got a name, let's find it
+        my ($bin) = grep { $_->name eq $id } $self->list;
+        if ($bin) {
+            $id = $bin->id;
+        }
+        else {
+            die "can't find ticket bin $id in project "
+              . $self->project_id
+              . ' in account '
+              . $self->account;
+        }
+    }
+
     my $ua = $self->ua;
     my $url =
         $self->base_url
@@ -259,7 +275,7 @@ rw, Maybe Str
 
 =over 4
 
-=item load( $id ), load_from_xml( $hashref | $xml_string )
+=item load( $id | $name ), load_from_xml( $hashref | $xml_string )
 
 load a ticket bin, return the loaded ticket bin object
 
