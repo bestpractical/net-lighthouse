@@ -42,7 +42,10 @@ sub load {
             $id = $milestone->id;
         }
         else {
-            die "can't find milestone $id in account " . $self->account;
+            die "can't find milestone $id in project "
+              . $self->project_id
+              . ' in account '
+              . $self->account;
         }
     }
 
