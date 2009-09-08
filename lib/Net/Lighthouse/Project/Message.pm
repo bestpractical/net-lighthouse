@@ -148,7 +148,7 @@ sub create_comment {
         $args{$field} = { content => $args{$field} };
     }
 
-    # doc says <message>, but it doesn't work actually.
+    # TODO doc says <message>, but it doesn't work actually.
     # comment can work, though still with a problem
     my $xml = XMLout( { comment => \%args }, KeepRoot => 1);
     my $ua = $self->ua;
@@ -281,17 +281,83 @@ __END__
 
 =head1 NAME
 
-Net::Lighthouse::Project::Message - 
+Net::Lighthouse::Project::Message - Project Message
 
 =head1 SYNOPSIS
 
     use Net::Lighthouse::Project::Message;
+    my $message = Net::Lighthouse::Project::Message->new(
+        account    => 'sunnavy',
+        auth       => { token => '' },
+        project_id => 12345,
+    );
+    $message->load( 1 );
+    print $message->title;
+    $message->delete;
 
-=head1 DESCRIPTION
+=head1 ATTRIBUTES
 
+=over 4
+
+=item created_at, updated_at
+
+ro, Maybe DateTime
+
+=item id, user_id, parent_id, comments_count, project_id, all_attachments_count, attachments_count
+
+ro, Maybe Int
+
+=item body_html, user_name, permalink, url
+
+ro, Maybe Str
+
+=item comments
+
+ro, ArrayRef of Net::Lighthouse::Project::Message
+
+=item title body
+
+rw, Maybe Str
+
+=back
 
 =head1 INTERFACE
 
+=over 4
+
+=item load( $id ), load_from_xml( $hashref | $xml_string )
+
+load a message, return the loaded message object
+
+=item create( title => '', body => '' );
+
+create a message, return true if succeeded
+
+=item create_comment( body => '' );
+
+create a comment, return true if succeeded
+
+=item update( title => '', body => '' );
+
+update a message, return true if succeeded
+
+=item delete
+
+delete the message, return true if succeeded
+
+=item list
+
+return a list of messages, each isa L<Net::Lighthouse::Project::Message>.
+
+=item initial_state
+
+return hashref, carrying the initial_state info
+
+=back
+
+=head1 SEE ALSO
+
+L<http://lighthouseapp.com/api/messages>
 
 =head1 AUTHOR
 

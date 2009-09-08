@@ -216,17 +216,75 @@ __END__
 
 =head1 NAME
 
-Net::Lighthouse::Project::Milestone - 
+Net::Lighthouse::Project::Milestone - Project Milestone
 
 =head1 SYNOPSIS
 
     use Net::Lighthouse::Project::Milestone;
+    my $milestone = Net::Lighthouse::Project::Milestone->new(
+        account    => 'sunnavy',
+        auth       => { token => '' },
+        project_id => 12345,
+    );
+    $milestone->load( 1 );
+    print $milestone->title;
+    $milestone->delete;
 
-=head1 DESCRIPTION
+=head1 ATTRIBUTES
 
+=over 4
+
+=item created_at, updated_at
+
+ro, Maybe DateTime
+
+=item open_tickets_count, id, project_id, tickets_count
+
+ro, Int
+
+=item goals_html, user_name, permalink, url
+
+ro, Maybe Str
+
+=item title, goals, due_on
+
+rw, Maybe Str
+
+=back
 
 =head1 INTERFACE
 
+=over 4
+
+=item load( $id | $name ), load_from_xml( $hashref | $xml_string )
+
+load a milestone, return the loaded milestone object
+
+=item create( goals => '', title => '', due_on => '' )
+
+create a milestone, return true if succeeded
+
+=item update( goals => '', title => '', due_on => '' )
+
+update a milestone, return true if succeeded
+
+=item delete
+
+delete the milestone, return true if succeeded
+
+=item list
+
+return a list of milestones, each isa L<Net::Lighthouse::Project::Milestone>
+
+=item initial_state
+
+return hashref, carrying the initial_state info
+
+=back
+
+=head1 SEE ALSO
+
+L<http://lighthouseapp.com/api/milestones>
 
 =head1 AUTHOR
 

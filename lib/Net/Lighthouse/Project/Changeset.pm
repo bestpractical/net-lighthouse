@@ -174,17 +174,75 @@ __END__
 
 =head1 NAME
 
-Net::Lighthouse::Project::Changeset - 
+Net::Lighthouse::Project::Changeset - Project Changeset
 
 =head1 SYNOPSIS
 
     use Net::Lighthouse::Project::Changeset;
+    my $changeset = Net::Lighthouse::Project:;Changeset->new(
+        account    => 'sunnavy',
+        auth       => { token => '' },
+        project_id => 12345,
+    );
+    $changeset->load( 1 );
+    print $changeset->title;
+    $changeset->delete;
 
-=head1 DESCRIPTION
+=head1 ATTRIBUTES
 
+=over 4
+
+=item project_id user_id
+
+ro, Int
+
+=item body_html
+
+ro, Maybe Str
+
+=item changed_at
+
+rw, DateTime
+
+=item changes
+
+rw, ArrayRef
+
+=item body, title, revision
+
+rw, Maybe Str
+
+=back
 
 =head1 INTERFACE
 
+=over 4
+
+=item load( $revision ), load_from_xml( $hashref | $xml_string )
+
+load a changeset, return the loaded changeset object
+
+=item create( revision => '', body => '', title => '', changes => '', changed_at => '', )
+
+create a changeset, return true if succeeded
+
+=item delete
+
+delete the changeset, return true if succeeded
+
+=item list
+
+return a list of changesets, each isa L<Net::Lighthouse::Project::Changeset>.
+
+=item initial_state
+
+return hashref, carrying the initial_state info
+
+=back
+
+=head1 SEE ALSO
+
+L<http://lighthouseapp.com/api/changesets>
 
 =head1 AUTHOR
 

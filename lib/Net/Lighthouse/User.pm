@@ -118,33 +118,58 @@ __END__
 
 =head1 NAME
 
-Net::Lighthouse::User - 
+Net::Lighthouse::User - User
 
 =head1 SYNOPSIS
 
     use Net::Lighthouse::User;
+    use Net::Lighthouse::User;
+    my $user = Net::Lighthouse::User->new(
+        account => 'sunnavy',
+        auth    => { token => '...' },
+    );
+    $user->load( 12345 );
 
-=head1 DESCRIPTION
+=head1 ATTRIBUTES
 
+=over 4
+
+=item id
+
+ro, Int
+
+=item avatar_url
+
+ro, Str
+
+=item name job website
+
+rw, Maybe Str
+
+=back
 
 =head1 INTERFACE
 
+=over 4
+
+=item load( $id ), load_from_xml( $hashref | $xml_string )
+
+load user, return loaded user object
 
 
-=head1 DEPENDENCIES
+=item update( name    => '', job => '', website => '' )
 
+update user, return true if succeed
 
-None.
+=item memberships
 
+return a list of memberships, each isa L<Net::Lighthouse::User::Membership>
 
-=head1 INCOMPATIBILITIES
+=back
 
-None reported.
+=head1 SEE ALSO
 
-
-=head1 BUGS AND LIMITATIONS
-
-No bugs have been reported.
+L<http://lighthouseapp.com/api/users>
 
 =head1 AUTHOR
 

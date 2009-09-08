@@ -20,7 +20,8 @@ has [ 'content_type', 'filename', 'url', 'type', 'code' ] => (
     is  => 'ro',
 );
 
-has 'ua' => ( is => 'ro', );
+# make test happy, added Test::MockObject
+has 'ua' => ( is => 'ro', isa => 'LWP::UserAgent|Test::MockObject', );
 
 has 'content' => (
     is      => 'ro',
@@ -59,17 +60,47 @@ __END__
 
 =head1 NAME
 
-Net::Lighthouse::Project::Ticket::Attachment - 
+Net::Lighthouse::Project::Ticket::Attachment - Project Ticket Attachment
 
 =head1 SYNOPSIS
 
     use Net::Lighthouse::Project::Ticket::Attachment;
 
-=head1 DESCRIPTION
+=head1 ATTRIBUTES
 
+=over 4
+
+=item created_at
+
+ro, DateTime, UTC based
+
+=item width, height, size, uploader_id, id
+
+ro, Maybe Int
+
+=item content_type, filename, url, type, code
+
+ro, Str
+
+=item ua
+
+ro, LWP::UserAgent
+
+=item content
+
+ro, Str
+
+=back
 
 =head1 INTERFACE
 
+=over 4
+
+=item load_from_xml( $hashref | $xml_string )
+
+load ticket attachment, return loaded ticket attachment
+
+=back
 
 =head1 AUTHOR
 

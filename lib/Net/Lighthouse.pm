@@ -46,7 +46,7 @@ __END__
 
 =head1 NAME
 
-Net::Lighthouse - 
+Net::Lighthouse - Perl interface to lighthouseapp.com
 
 
 =head1 VERSION
@@ -57,28 +57,53 @@ This document describes Net::Lighthouse version 0.01
 =head1 SYNOPSIS
 
     use Net::Lighthouse;
+    my $lh;
+    $lh = Net::Lighthouse->new(
+        account => 'foo',
+        auth    => { token => 'bla' },
+    );
+
+    $lh = Net::Lighthouse->new(
+        account => 'foo',
+        auth    => { email => 'bar@example.com', password => 'password' },
+    );
+
+    my @projects = $lh->projects;
+    my $project = $lh->project;
+    my $token = $lh->token;
+    my $user = $lh->user;
+
 
 =head1 DESCRIPTION
 
+L<Net::Lighthouse> is a Perl interface to lighthouseapp.com, by means of its official api.
 
 =head1 INTERFACE
 
+=over 4
 
+=item projects
+
+return a list of projects, each isa L<Net::Lighthouse::Project>.
+
+=item project, token, user
+
+return a corresponding object, with account and auth prefilled if exist.
+
+=back
 
 =head1 DEPENDENCIES
 
-
-None.
-
-
-=head1 INCOMPATIBILITIES
-
-None reported.
-
+L<Any::Moose>, L<Params::Validate>, L<XML::Simple>, L<LWP>, L<MIME::Base64>,
+L<YAML::Syck>, L<DateTime>, L<URI::Escape>
 
 =head1 BUGS AND LIMITATIONS
 
 No bugs have been reported.
+
+=head1 SEE ALSO
+
+L<Net::Lighthouse::Base>, L<http://lighthouseapp.com/api>
 
 =head1 AUTHOR
 

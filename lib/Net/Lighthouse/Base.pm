@@ -31,7 +31,7 @@ sub ua {
       LWP::UserAgent->new(
         agent => 'net-lighthouse/' . $Net::Lighthouse::VERSION );
     $ua->default_header( 'Content-Type' => 'application/xml' );
-    # email and password have high priority
+    # email and password have higher priority
     my $auth = $self->auth;
     if ( $auth->{email} && $auth->{password} ) {
         my $base64 = encode_base64( $auth->{email} . ':' . $auth->{password} );
@@ -51,17 +51,44 @@ __END__
 
 =head1 NAME
 
-Net::Lighthouse::Base - Base class
+Net::Lighthouse::Base - Base
 
 =head1 SYNOPSIS
 
     use Net::Lighthouse::Base;
 
-=head1 DESCRIPTION
+=head1 ATTRIBUTES
 
+=over 4
+
+=item account
+
+read only, returns account string, e.g. 'foo' as in http://foo.lighthouseapp.com
+
+=item auth
+
+a hashref like { token => '... } or { email => '...', password => '...' }.
+
+=back
 
 =head1 INTERFACE
 
+=over 4
+
+=item base_url
+
+the base_url string, e.g. 'http://foo.lighthouseapp.com'
+
+=item ua
+
+returns an L<LWP::UserAgent> object, with agent, content-type and auth stuff
+prefilled.
+
+=back
+
+=head1 SEE ALSO
+
+L<http://lighthouseapp.com/api/the-basics>
 
 =head1 AUTHOR
 

@@ -207,7 +207,6 @@ sub list {
     my $res = $ua->get( $url );
     if ( $res->is_success ) {
         my $ps = XMLin( $res->content, KeyAttr => [] )->{project};
-        $ps = [$ps] unless ref $ps eq 'ARRAY';
         my @list = map {
             my $p = Net::Lighthouse::Project->new(
                 map { $_ => $self->$_ }
@@ -319,33 +318,109 @@ __END__
 
 =head1 NAME
 
-Net::Lighthouse::Project - 
+Net::Lighthouse::Project - Project
 
 =head1 SYNOPSIS
 
     use Net::Lighthouse::Project;
+    my $project = Net::Lighthouse::Project->new(
+        account => 'foo',
+        auth    => { token => 'bla' },
+    );
 
-=head1 DESCRIPTION
+    $project->load( 35918 ); # load by id
+    $project->load( 'foo' ); # load by name
 
+    my $description = $project->description;
+    my $created_at = $project->created_at; # DateTime object, UTC based
+
+    my @projects   = $project->list;
+    my $ticket     = $project->ticket;
+    my @tickets    = $project->tickets;
+    my $bin        = $project->ticket_bin;
+    my @bins       = $project->ticket_bins;
+    my $changeset  = $project->changeset;
+    my @changesets = $project->changesets;
+    my $milestone  = $project->milestone;
+    my @milestones = $project->milestones;
+    my $message    = $project->message;
+    my @messages   = $project->messages;
+
+=head1 ATTRIBUTES
+
+=over 4
+
+=item created_at, updated_at
+
+ro, DateTime object, UTC based
+
+=item open_states_list, closed_states_list, open_states, closed_states
+
+ro, Array
+
+=item default_assigned_user_id, default_milestone_id, id, open_tickets_count
+
+ro, Maybe Int
+
+=item hidden, send_changesets_to_events
+
+ro, Bool
+
+=item description, description_html, permalink, access, license
+
+ro, Maybe Str
+
+=item archived, public
+
+rw, Bool
+
+=item name
+
+rw, Bool
+
+=back
 
 =head1 INTERFACE
 
+=over 4
 
+=item projects, changesets, tickets, ticket_bins, messages, milestones
 
-=head1 DEPENDENCIES
+return a list of corresponding object
 
+=item changeset, ticket, ticket_bin, message, milestone
 
-None.
+return a corresponding object, with account and auth prefilled if exist.
 
+=item create( name => '', archived => '', public => '' )
 
-=head1 INCOMPATIBILITIES
+create a project, return true if succeeded
 
-None reported.
+=item update( name => '', archived => '', public => '' )
 
+update the project, return true if succeeded
 
-=head1 BUGS AND LIMITATIONS
+=item delete
 
-No bugs have been reported.
+delete the project, return true if succeeded
+
+=item list
+
+return a list of projects, each isa L<Net::Lighthouse::Project>
+
+=item load( $id | $name ), load_from_xml( $hahsref | $xml_string )
+
+load a project, return loaded project object
+
+=item initial_state
+
+return hashref, carrying the initial_state info
+
+=back
+
+=head1 SEE ALSO
+
+L<http://lighthouseapp.com/api/projects>
 
 =head1 AUTHOR
 

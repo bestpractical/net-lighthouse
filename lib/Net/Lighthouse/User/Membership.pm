@@ -57,9 +57,33 @@ Net::Lighthouse::User::Membership -
 
 =head1 DESCRIPTION
 
+=head1 ATTRIBUTES
+
+=over 4
+
+=item id, user_id
+
+ro, Int
+
+=item account, project
+
+ro, Str
+
+=back
 
 =head1 INTERFACE
 
+=over 4
+
+=item load_from_xml( $hashref | xml_string )
+
+load membership, return loaded membership
+
+=back
+
+=head1 SEE ALSO
+
+membership in L<http://lighthouseapp.com/api/users>
 
 =head1 AUTHOR
 

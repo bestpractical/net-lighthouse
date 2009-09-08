@@ -21,11 +21,10 @@ has [qw/closed /] => (
 );
 
 has [
-    'raw_data',     'user_name',
-    'state',        'permalink',
-    'url',          'latest_body',
-    'creator_name', 'assigned_user_name',
-    'milestone_title',
+    'raw_data',           'user_name',
+    'permalink',          'url',
+    'latest_body',        'creator_name',
+    'assigned_user_name', 'milestone_title',
   ] => (
     isa => 'Maybe[Str]',
     is  => 'ro',
@@ -313,17 +312,93 @@ __END__
 
 =head1 NAME
 
-Net::Lighthouse::Project::Ticket - 
+Net::Lighthouse::Project::Ticket - Project Ticket
 
 =head1 SYNOPSIS
 
     use Net::Lighthouse::Project::Ticket;
+    my $ticket = Net::Lighthouse::Project::Ticket->new(
+        account    => 'sunnavy',
+        auth       => { token => '' },
+        project_id => 12345
+    );
+    $ticket->load( 1 );
+    print $ticket->state;
+    $ticket->delete;
 
-=head1 DESCRIPTION
+=head1 ATTRIBUTES
 
+=over 4
+
+=item created_at, updated_at, milestone_due_on
+
+ro, Maybe DateTime
+
+=item number, priority, user_id, project_id, creator_id, attachments_count,
+
+ro, Maybe Int
+
+=item closed
+
+ro, Bool
+
+=item raw_data, user_name, permalink, url, latest_body, creator_name, assigned_user_name, milestone_title
+
+ro, Maybe Str
+
+=item attachments
+
+ro, ArrayRef of Net::Lighthouse::Project::Ticket::Attachment
+
+=item versions
+
+ro, ArrayRef of Net::Lighthouse::Project::Ticket::Version
+
+=item assigned_user_id, milestone_id
+
+rw, Maybe Int
+
+=item title, state, tag,
+
+rw, Maybe Str
+
+=back
 
 =head1 INTERFACE
 
+=over 4
+
+=item load( $id ), load_from_xml( $hashref | $xml_string )
+
+load a ticket, return the loaded ticket object
+
+=item create( title => '', body  => '', state => '', assigned_user_id => '', milestone_id => '', tag => '', )
+
+create a ticket, return true if succeeded
+
+=item update( title => '', body  => '', state => '', assigned_user_id => '', milestone_id => '', tag => '', )
+
+update a ticket, return true if succeeded
+
+=item delete
+
+delete a ticket, return true if succeeded
+
+=item list( query => '', page => '' )
+
+return a list of tickets, each isa L<Net::Lighthouse::Project::Ticket>.
+
+NOTE: the ticket in this list doesn't load versions and attachments attrs
+
+=item initial_state
+
+return hashref, carrying the initial_state info
+
+=back
+
+=head1 SEE ALSO
+
+L<http://lighthouseapp.com/api/tickets>
 
 =head1 AUTHOR
 

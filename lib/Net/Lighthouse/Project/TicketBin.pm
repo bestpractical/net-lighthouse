@@ -214,14 +214,78 @@ __END__
 
 =head1 NAME
 
-Net::Lighthouse::Project::TicketBin - 
+Net::Lighthouse::Project::TicketBin - Project TicketBin
 
 =head1 SYNOPSIS
 
     use Net::Lighthouse::Project::TicketBin;
+    my $bin = Net::Lighthouse::Project::TicketBin->new(
+        account    => 'sunnavy',
+        auth       => { token => '' },
+        project_id => 12345,
+    );
+    $bin->load( 1 );
+    print $bin->name;
+    $bin->delete;
 
-=head1 DESCRIPTION
 
+=head1 ATTRIBUTES
+
+=over 4
+
+=item updated_at
+
+ro, DateTime
+
+=item user_id, position, project_id, tickets_count, id
+
+ro, Int
+
+=item shared
+
+ro, Bool
+
+=item default
+
+rw, Bool
+
+=item name, query,
+
+rw, Maybe Str
+
+=back
+
+=head1 INTERFACE
+
+=over 4
+
+=item load( $id ), load_from_xml( $hashref | $xml_string )
+
+load a ticket bin, return the loaded ticket bin object
+
+=item create( name => '', query => '', default => '' );
+
+create a ticket bin, return true if succeeded
+
+=item update( name => '', query => '', default => '' );
+
+update a ticket bin, return true if succeeded
+
+=item delete
+
+delete the ticket bin, return true if succeeded
+
+=item list
+
+return a list of ticket bins, each isa L<Net::Lighthouse::Project::TicketBin>.
+
+=back
+
+=head1 SEE ALSO
+
+L<http://lighthouseapp.com/api/ticket-bins>
+
+=head1 ATTRIBUTES
 
 =head1 INTERFACE
 

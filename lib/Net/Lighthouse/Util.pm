@@ -77,7 +77,7 @@ __END__
 
 =head1 NAME
 
-Net::Lighthouse::Util - 
+Net::Lighthouse::Util - Util
 
 =head1 SYNOPSIS
 
@@ -85,9 +85,29 @@ Net::Lighthouse::Util -
 
 =head1 DESCRIPTION
 
+utility methods live here
 
 =head1 INTERFACE
 
+=over 4
+
+=item translate_from_xml( $hashref | $xml_string )
+
+translate from xml, the general translation map is:
+'foo-bar' => 'foo_bar',
+value bool false | true => 0 | 1,
+value yaml string => object
+value datetime string => L<DateTime> object
+
+=item datetime_from_string
+
+parse string to a L<DateTime> object, and translate its timezone to UTC
+
+=back
+
+=head1 SEE ALSO
+
+L<DateTime>, L<YAML::Syck>
 
 =head1 AUTHOR
 

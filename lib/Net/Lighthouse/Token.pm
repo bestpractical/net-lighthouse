@@ -74,17 +74,61 @@ __END__
 
 =head1 NAME
 
-Net::Lighthouse::Token - 
+Net::Lighthouse::Token - Token
 
 =head1 SYNOPSIS
 
     use Net::Lighthouse::Token;
+    my $token = Net::Lighthouse::Token->new(
+        account => 'sunnavy',
+        auth    => { token => '...' },
+    );
+    $token->load( 'abcdedf...' );
 
-=head1 DESCRIPTION
+=head1 ATTRIBUTES
 
+=over 4
+
+=item created_at
+
+ro, DateTime object, UTC based
+
+=item user_id
+
+ro, Int
+
+=item project_id
+
+ro, Maybe Int
+
+=item read_only
+
+ro, Bool
+
+=item token
+
+ro, Str
+
+=item account, note
+ro, Maybe Str
+
+=item
+
+=back
 
 =head1 INTERFACE
 
+=over 4
+
+=item load( $token_string ) load_from_xml( $hashref | $xml_string )
+
+load a token, return loaded token object
+
+=back
+
+=head1 SEE ALSO
+
+token part in L<http://lighthouseapp.com/api/users>
 
 =head1 AUTHOR
 
