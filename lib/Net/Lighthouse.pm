@@ -8,7 +8,7 @@ use Net::Lighthouse::Token;
 use Net::Lighthouse::User;
 use base 'Net::Lighthouse::Base';
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub project { return shift->_new( 'Project' ) }
 sub user { return shift->_new( 'User' ) }
