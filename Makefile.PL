@@ -4,6 +4,7 @@ name     'Net-Lighthouse';
 all_from 'lib/Net/Lighthouse.pm';
 author   'sunnavy <sunnavy@bestpractical.com>';
 license  'perl';
+repository 'git://github.com/bestpractical/net-lighthouse.git';
 
 requires 'Any::Moose';
 requires 'Params::Validate';
