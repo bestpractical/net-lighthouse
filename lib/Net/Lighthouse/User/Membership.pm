@@ -49,7 +49,7 @@ __END__
 
 =head1 NAME
 
-Net::Lighthouse::User::Membership - 
+Net::Lighthouse::User::Membership - User Membership 
 
 =head1 SYNOPSIS
 
