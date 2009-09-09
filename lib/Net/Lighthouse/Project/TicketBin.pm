@@ -140,7 +140,7 @@ sub update {
             default => { optional => 1, type => BOOLEAN },
         }
     );
-    my %args = @_;
+    my %args = ( ( map { $_ => $self->$_ } qw/name query default/ ), @_ );
 
     if ( exists $args{default} ) {
         if ( $args{default} ) {

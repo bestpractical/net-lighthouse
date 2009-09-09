@@ -184,7 +184,7 @@ sub update {
             body  => { optional => 1, type     => SCALAR },
         }
     );
-    my %args = @_;
+    my %args = ( ( map { $_ => $self->$_ } qw/title body/ ), @_ );
 
     for my $field (qw/title body/) {
         next unless exists $args{$field};

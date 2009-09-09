@@ -150,7 +150,7 @@ sub update {
             public   => { optional => 1, type => BOOLEAN },
         }
     );
-    my %args = @_;
+    my %args = ( ( map { $_ => $self->$_ } qw/archived name public/ ), @_ );
 
     if ( defined $args{name} ) {
         $args{name} = { content => $args{name} };

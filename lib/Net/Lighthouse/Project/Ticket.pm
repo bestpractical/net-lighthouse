@@ -199,7 +199,13 @@ sub update {
             tag => { optional => 1, type => SCALAR },
         }
     );
-    my %args = @_;
+    my %args = (
+        (
+            map { $_ => $self->$_ }
+              qw/title body state assigned_user_id milestone_id tag/
+        ),
+        @_
+    );
 
     for my $field (qw/title body state assigned_user_id milestone_id tag/) {
         next unless exists $args{$field};

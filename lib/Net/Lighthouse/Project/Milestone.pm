@@ -123,7 +123,7 @@ sub update {
             due_on => { optional => 1, type => SCALAR },
         }
     );
-    my %args = @_;
+    my %args = ( ( map { $_ => $self->$_ } qw/title goals due_on/ ), @_ );
 
     for my $field (qw/goals title due_on/) {
         next unless exists $args{$field};

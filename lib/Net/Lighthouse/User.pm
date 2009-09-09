@@ -64,7 +64,7 @@ sub update {
             website => { optional => 1, type => SCALAR },
         }
     );
-    my %args = @_;
+    my %args = ( ( map { $_ => $self->$_ } qw/name job website/ ), @_ );
 
     for my $field (qw/name job website/) {
         next unless exists $args{$field};
