@@ -51,7 +51,7 @@ Net::Lighthouse - Perl interface to lighthouseapp.com
 
 =head1 VERSION
 
-This document describes Net::Lighthouse version 0.01
+This document describes Net::Lighthouse version 0.02
 
 
 =head1 SYNOPSIS

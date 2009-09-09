@@ -10,12 +10,17 @@ requires 'Params::Validate';
 requires 'XML::Simple';
 requires 'LWP';
 requires 'MIME::Base64';
-requires 'YAML::Syck';
 requires 'DateTime';
 requires 'URI::Escape';
 
-eval { require Moose };
-if ($@) {
+if ( can_cc() ) {
+    requires 'YAML::Syck';
+}
+else {
+    requires 'YAML' unless can_use( 'YAML::Syck' );
+}
+
+unless ( can_use('Moose') ) {
     requires 'Mouse' => 0.28;
 }
 

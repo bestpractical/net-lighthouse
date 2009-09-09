@@ -4,7 +4,19 @@ use warnings;
 package Net::Lighthouse::Util;
 use XML::Simple;
 use DateTime;
-use YAML::Syck;
+
+BEGIN {
+    local $@;
+    eval { require YAML::Syck; };
+    if ($@) {
+        require YAML;
+        *_Load     = *YAML::Load;
+    }
+    else {
+        *_Load     = *YAML::Syck::Load;
+    }
+}
+
 
 sub translate_from_xml {
     my $class = shift;
@@ -30,7 +42,7 @@ sub translate_from_xml {
                       $class->datetime_from_string( $ref->{$k}{content} );
             }
             elsif ( $ref->{$k}{type} && $ref->{$k}{type} eq 'yaml' ) {
-                    $ref->{$k} = Load( $ref->{$k}{content} );
+                    $ref->{$k} = _Load( $ref->{$k}{content} );
             }
             elsif ( $ref->{$k}{type} && $ref->{$k}{type} eq 'integer' ) {
                     $ref->{$k} =
