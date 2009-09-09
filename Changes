@@ -1,5 +1,7 @@
 Revision history for Net-Lighthouse
 
+0.03
+
 0.02 Wed Sep  9 10:37:42 CST 2009
     * use either YAML::Syck or YAML, depending on what people have
 
