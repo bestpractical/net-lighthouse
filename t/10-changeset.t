@@ -67,7 +67,7 @@ my %hash = (
 );
 
 for my $k ( keys %hash ) {
-    is_deeply( $n1->$k, $hash{$k}, "$k is loaded" );
+    is_deeply( scalar $n1->$k, $hash{$k}, "$k is loaded" );
 }
 
 $Mock_response->mock(
