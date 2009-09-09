@@ -14,6 +14,11 @@ requires 'YAML::Syck';
 requires 'DateTime';
 requires 'URI::Escape';
 
+eval { require Moose };
+if ($@) {
+    requires 'Mouse' => 0.28;
+}
+
 test_requires 'Test::More';
 test_requires 'Test::Mock::LWP';
 
