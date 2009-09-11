@@ -1,5 +1,7 @@
 Revision history for Net-Lighthouse
 
+0.05
+
 0.04 Sat Sep 12 00:10:18 CST 2009
     * use XML::TreePP to parse xml
 
