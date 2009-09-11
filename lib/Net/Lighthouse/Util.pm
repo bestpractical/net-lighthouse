@@ -166,6 +166,14 @@ value bool false | true => 0 | 1,
 value yaml string => object
 value datetime string => L<DateTime> object
 
+=item translate_to_xml( $hashref, root => 'project', boolean => ['foo','bar'] )
+
+generally, the reverse of translate_from_xml.
+
+=item read_xml write_xml
+
+wrap of XML::TreePP->parse and XML::TreePP->write, respectively
+
 =item datetime_from_string
 
 parse string to a L<DateTime> object, and translate its timezone to UTC
