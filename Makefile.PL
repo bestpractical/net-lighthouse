@@ -21,8 +21,8 @@ else {
     requires 'YAML' unless can_use( 'YAML::Syck' );
 }
 
-unless ( can_use('Moose') ) {
-    requires 'Mouse' => 0.28;
+if ( can_use('Mouse') && !can_use( 'Mouse', 0.28 ) || !can_use('Moose') ) {
+    requires Mouse => 0.28;
 }
 
 test_requires 'Test::More';
