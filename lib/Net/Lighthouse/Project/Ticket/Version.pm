@@ -1,6 +1,5 @@
 package Net::Lighthouse::Project::Ticket::Version;
 use Any::Moose;
-use XML::Simple;
 use Params::Validate ':all';
 use Net::Lighthouse::Util;
 
