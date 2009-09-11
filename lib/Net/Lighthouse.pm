@@ -94,7 +94,7 @@ return a corresponding object, with account and auth prefilled if exist.
 
 =head1 DEPENDENCIES
 
-L<Any::Moose>, L<Params::Validate>, L<XML::Simple>, L<LWP>, L<MIME::Base64>,
+L<Any::Moose>, L<Params::Validate>, L<XML::TreePP>, L<LWP>, L<MIME::Base64>,
 L<YAML::Syck>, L<DateTime>, L<URI::Escape>
 
 =head1 BUGS AND LIMITATIONS

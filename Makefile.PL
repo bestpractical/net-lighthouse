@@ -8,7 +8,7 @@ repository 'git://github.com/bestpractical/net-lighthouse.git';
 
 requires 'Any::Moose';
 requires 'Params::Validate';
-requires 'XML::Simple';
+requires 'XML::TreePP';
 requires 'LWP';
 requires 'MIME::Base64';
 requires 'DateTime';

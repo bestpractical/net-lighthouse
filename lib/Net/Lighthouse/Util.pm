@@ -3,7 +3,12 @@ use warnings;
 
 package Net::Lighthouse::Util;
 use DateTime;
-use XML::Simple;
+use XML::TreePP;
+my $tpp = XML::TreePP->new;
+$tpp->set( xml_decl => '' );
+$tpp->set( output_encoding => 'UTF-8' );
+$tpp->set( utf8_flag => 1 );
+$tpp->set( text_node_key => 'content' );
 
 BEGIN {
     local $@;
@@ -19,12 +24,12 @@ BEGIN {
 
 sub read_xml {
     my $self = shift;
-    return XMLin( @_, KeyAttr => [], KeepRoot => 1 );
+    return $tpp->parse( shift );
 }
 
 sub write_xml {
     my $self = shift;
-    return XMLout( @_, KeepRoot => 1 );
+    return $tpp->write(shift);
 }
 
 
@@ -41,11 +46,12 @@ sub translate_from_xml {
 
     %$ref = map { my $new = $_; $new =~ s/-/_/g; $new => $ref->{$_} } keys %$ref;
     for my $k ( keys %$ref ) {
+        $ref->{$k} = '' unless $ref->{$k};
         if ( ref $ref->{$k} eq 'HASH' ) {
-            if ( $ref->{$k}{nil} && $ref->{$k}{nil} eq 'true' ) {
+            if ( $ref->{$k}{-nil} && $ref->{$k}{-nil} eq 'true' ) {
                 $ref->{$k} = undef;
             }
-            elsif ( $ref->{$k}{type} && $ref->{$k}{type} eq 'boolean' ) {
+            elsif ( $ref->{$k}{-type} && $ref->{$k}{-type} eq 'boolean' ) {
                 if ( $ref->{$k}{content} eq 'true' ) {
                     $ref->{$k} = 1;
                 }
@@ -53,22 +59,26 @@ sub translate_from_xml {
                     $ref->{$k} = 0;
                 }
             }
-            elsif ( $ref->{$k}{type} && $ref->{$k}{type} eq 'datetime' ) {
+            elsif ( $ref->{$k}{-type} && $ref->{$k}{-type} eq 'datetime' ) {
                     $ref->{$k} =
                       $class->datetime_from_string( $ref->{$k}{content} );
             }
-            elsif ( $ref->{$k}{type} && $ref->{$k}{type} eq 'yaml' ) {
+            elsif ( $ref->{$k}{-type} && $ref->{$k}{-type} eq 'yaml' ) {
                     $ref->{$k} = _Load( $ref->{$k}{content} );
             }
-            elsif ( $ref->{$k}{type} && $ref->{$k}{type} eq 'integer' ) {
-                    $ref->{$k} =
-                      defined $ref->{$k}{content} ? $ref->{$k}{content} : undef;
+            elsif ( $ref->{$k}{-type} && $ref->{$k}{-type} eq 'integer' ) {
+                if ( defined $ref->{$k}{content} && $ref->{$k}{content} ne '' ) {
+                    $ref->{$k} = $ref->{$k}{content};
+                }
+                else {
+                    $ref->{$k} = undef;
+                }
             }
             elsif ( defined $ref->{$k}{content} ) {
                 $ref->{$k} = $ref->{$k}{content};
             }
             elsif ( keys %{ $ref->{$k} } == 0
-                || keys %{ $ref->{$k} } == 1 && exists $ref->{$k}{type} )
+                || keys %{ $ref->{$k} } == 1 && exists $ref->{$k}{-type} )
             {
                 $ref->{$k} = '';
             }
@@ -89,10 +99,10 @@ sub translate_to_xml {
             delete $normal{$_};
             next unless exists $ref->{$boolean};
             if ( $ref->{$boolean} ) {
-                $ref->{$boolean} = { content => 'true', type => 'boolean' };
+                $ref->{$boolean} = { content => 'true', -type => 'boolean' };
             }
             else {
-                $ref->{$boolean} = { content => 'false', type => 'boolean' };
+                $ref->{$boolean} = { content => 'false', -type => 'boolean' };
             }
         }
     }
@@ -109,8 +119,8 @@ sub translate_to_xml {
 sub datetime_from_string {
     my $class  = shift;
     my $string = shift;
-    if (   $string
-        && $string =~
+    return unless $string;
+    if ( $string =~
         /(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(Z|[+-]\d{2}:\d{2})/ )
     {
 
