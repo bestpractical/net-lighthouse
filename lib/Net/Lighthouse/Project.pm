@@ -107,21 +107,12 @@ sub create {
     );
     my %args = @_;
 
-    if ( defined $args{name} ) {
-        $args{name} = { content => $args{name} };
-    }
+    my $xml = Net::Lighthouse::Util->translate_to_xml(
+        \%args,
+        root    => 'project',
+        boolean => [qw/archived public/],
+    );
 
-    for my $bool (qw/archived public/) {
-        next unless exists $args{$bool};
-        if ( $args{$bool} ) {
-            $args{$bool} = { content => 'true', type => 'boolean' };
-        }
-        else {
-            $args{$bool} = { content => 'false', type => 'boolean' };
-        }
-    }
-
-    my $xml = Net::Lighthouse->write_xml( { project => \%args });
     my $ua = $self->ua;
 
     my $url = $self->base_url . '/projects.xml';
@@ -151,21 +142,12 @@ sub update {
     );
     my %args = ( ( map { $_ => $self->$_ } qw/archived name public/ ), @_ );
 
-    if ( defined $args{name} ) {
-        $args{name} = { content => $args{name} };
-    }
+    my $xml = Net::Lighthouse::Util->translate_to_xml(
+        \%args,
+        root    => 'project',
+        boolean => [qw/archived public/],
+    );
 
-    for my $bool (qw/archived public/) {
-        next unless exists $args{$bool};
-        if ( $args{$bool} ) {
-            $args{$bool} = { content => 'true', type => 'boolean' };
-        }
-        else {
-            $args{$bool} = { content => 'false', type => 'boolean' };
-        }
-    }
-
-    my $xml = Net::Lighthouse->write_xml( { project => \%args });
     my $ua = $self->ua;
     my $url = $self->base_url . '/projects/' . $self->id . '.xml';
 
@@ -205,7 +187,7 @@ sub list {
     my $url = $self->base_url . '/projects.xml';
     my $res = $ua->get( $url );
     if ( $res->is_success ) {
-        my $ps = Net::Lighthouse::Util->read_xml( $res->content )->{project};
+        my $ps = Net::Lighthouse::Util->read_xml( $res->content )->{projects}{project};
         my @list = map {
             my $p = Net::Lighthouse::Project->new(
                 map { $_ => $self->$_ }

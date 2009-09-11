@@ -89,12 +89,8 @@ sub create {
     );
     my %args = @_;
 
-    for my $field (qw/goals title due_on/) {
-        next unless exists $args{$field};
-        $args{$field} = { content => $args{$field} };
-    }
-
-    my $xml = Net::Lighthouse->write_xml( { milestone => \%args });
+    my $xml =
+      Net::Lighthouse::Util->translate_to_xml( \%args, root => 'milestone', );
     my $ua = $self->ua;
 
     my $url = $self->base_url . '/projects/' . $self->project_id . '/milestones.xml';
@@ -124,12 +120,8 @@ sub update {
     );
     my %args = ( ( map { $_ => $self->$_ } qw/title goals due_on/ ), @_ );
 
-    for my $field (qw/goals title due_on/) {
-        next unless exists $args{$field};
-        $args{$field} = { content => $args{$field} };
-    }
-
-    my $xml = Net::Lighthouse->write_xml( { milestone => \%args });
+    my $xml =
+      Net::Lighthouse::Util->translate_to_xml( \%args, root => 'milestone', );
     my $ua = $self->ua;
     my $url =
         $self->base_url
@@ -178,7 +170,8 @@ sub list {
     my $ua  = $self->ua;
     my $res = $ua->get($url);
     if ( $res->is_success ) {
-        my $ms = Net::Lighthouse::Util->read_xml( $res->content )->{milestone};
+        my $ms =
+          Net::Lighthouse::Util->read_xml( $res->content )->{milestones}{milestone};
         my @list = map {
             my $t = Net::Lighthouse::Project::Milestone->new(
                 map { $_ => $self->$_ }

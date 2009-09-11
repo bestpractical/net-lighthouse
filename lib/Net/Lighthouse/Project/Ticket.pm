@@ -154,12 +154,9 @@ sub create {
     );
     my %args = @_;
 
-    for my $field (qw/title body state assigned_user_id milestone_id tag/) {
-        next unless exists $args{$field};
-        $args{$field} = { content => $args{$field} };
-    }
+    my $xml =
+      Net::Lighthouse::Util->translate_to_xml( \%args, root => 'ticket', );
 
-    my $xml = Net::Lighthouse->write_xml( { ticket => \%args });
     my $ua = $self->ua;
 
     my $url = $self->base_url . '/projects/' . $self->project_id . '/tickets.xml';
@@ -206,12 +203,9 @@ sub update {
         @_
     );
 
-    for my $field (qw/title body state assigned_user_id milestone_id tag/) {
-        next unless exists $args{$field};
-        $args{$field} = { content => $args{$field} };
-    }
+    my $xml =
+      Net::Lighthouse::Util->translate_to_xml( \%args, root => 'ticket', );
 
-    my $xml = Net::Lighthouse->write_xml( { ticket => \%args });
     my $ua = $self->ua;
     my $url =
         $self->base_url
@@ -277,7 +271,7 @@ sub list {
     my $ua  = $self->ua;
     my $res = $ua->get($url);
     if ( $res->is_success ) {
-        my $ts = Net::Lighthouse::Util->read_xml( $res->content )->{ticket};
+        my $ts = Net::Lighthouse::Util->read_xml( $res->content )->{tickets}{ticket};
         my @list = map {
             my $t = Net::Lighthouse::Project::Ticket->new(
                 map { $_ => $self->$_ }

@@ -109,12 +109,8 @@ sub create {
     );
     my %args = @_;
 
-    for my $field (qw/title body/) {
-        next unless exists $args{$field};
-        $args{$field} = { content => $args{$field} };
-    }
-
-    my $xml = Net::Lighthouse->write_xml( { message => \%args });
+    my $xml =
+      Net::Lighthouse::Util->translate_to_xml( \%args, root => 'message', );
     my $ua = $self->ua;
 
     my $url = $self->base_url . '/projects/' . $self->project_id . '/messages.xml';
@@ -142,14 +138,11 @@ sub create_comment {
     );
     my %args = @_;
 
-    for my $field (qw/body/) {
-        next unless exists $args{$field};
-        $args{$field} = { content => $args{$field} };
-    }
-
     # TODO doc says <message>, but it doesn't work actually.
     # comment can work, though still with a problem
-    my $xml = Net::Lighthouse->write_xml( { comment => \%args });
+    my $xml =
+      Net::Lighthouse::Util->translate_to_xml( \%args, root => 'comment', );
+
     my $ua = $self->ua;
 
     my $url =
@@ -185,12 +178,9 @@ sub update {
     );
     my %args = ( ( map { $_ => $self->$_ } qw/title body/ ), @_ );
 
-    for my $field (qw/title body/) {
-        next unless exists $args{$field};
-        $args{$field} = { content => $args{$field} };
-    }
+    my $xml =
+      Net::Lighthouse::Util->translate_to_xml( \%args, root => 'message', );
 
-    my $xml = Net::Lighthouse->write_xml( { message => \%args });
     my $ua = $self->ua;
     my $url =
         $self->base_url
@@ -240,7 +230,7 @@ sub list {
     my $ua  = $self->ua;
     my $res = $ua->get($url);
     if ( $res->is_success ) {
-        my $ms = Net::Lighthouse::Util->read_xml( $res->content )->{message};
+        my $ms = Net::Lighthouse::Util->read_xml( $res->content )->{messages}{message};
         my @list = map {
             my $t = Net::Lighthouse::Project::Message->new(
                 map { $_ => $self->$_ }

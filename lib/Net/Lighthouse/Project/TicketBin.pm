@@ -96,22 +96,12 @@ sub create {
     );
     my %args = @_;
 
-    if ( exists $args{default} ) {
-        if ( $args{default} ) {
-            $args{default} = { content => 'true', type => 'boolean' };
-        }
-        else {
-            $args{default} = { content => 'false', type => 'boolean' };
-        }
-    }
-    
+    my $xml = Net::Lighthouse::Util->translate_to_xml(
+        \%args,
+        root    => 'bin',
+        boolean => ['default'],
+    );
 
-    for my $field (qw/name query/) {
-        next unless exists $args{$field};
-        $args{$field} = { content => $args{$field} };
-    }
-
-    my $xml = Net::Lighthouse->write_xml( { bin => \%args } );
     my $ua = $self->ua;
 
     my $url = $self->base_url . '/projects/' . $self->project_id . '/bins.xml';
@@ -141,21 +131,12 @@ sub update {
     );
     my %args = ( ( map { $_ => $self->$_ } qw/name query default/ ), @_ );
 
-    if ( exists $args{default} ) {
-        if ( $args{default} ) {
-            $args{default} = { content => 'true', type => 'boolean' };
-        }
-        else {
-            $args{default} = { content => 'false', type => 'boolean' };
-        }
-    }
+    my $xml = Net::Lighthouse::Util->translate_to_xml(
+        \%args,
+        root    => 'bin',
+        boolean => ['default'],
+    );
 
-    for my $field (qw/name query/) {
-        next unless exists $args{$field};
-        $args{$field} = { content => $args{$field} };
-    }
-
-    my $xml = Net::Lighthouse->write_xml( { bin => \%args } );
     my $ua = $self->ua;
     my $url =
         $self->base_url
@@ -205,7 +186,8 @@ sub list {
     my $ua   = $self->ua;
     my $res  = $ua->get($url);
     if ( $res->is_success ) {
-        my $bs = Net::Lighthouse::Util->read_xml( $res->content )->{'ticket-bin'};
+        my $bs =
+          Net::Lighthouse::Util->read_xml( $res->content )->{'ticket-bins'}{'ticket-bin'};
         my @list = map {
             my $t = Net::Lighthouse::Project::TicketBin->new(
                 map { $_ => $self->$_ }

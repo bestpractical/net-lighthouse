@@ -19,7 +19,7 @@ BEGIN {
 
 sub read_xml {
     my $self = shift;
-    return XMLin( @_, KeyAttr => [] );
+    return XMLin( @_, KeyAttr => [], KeepRoot => 1 );
 }
 
 sub write_xml {
@@ -33,6 +33,12 @@ sub translate_from_xml {
     my $ref = shift;
     return unless $ref;
     $ref = Net::Lighthouse::Util->read_xml( $ref ) unless ref $ref;
+
+    # remove root
+    if ( keys %$ref == 1 ) {
+        ($ref) = values %$ref;
+    }
+
     %$ref = map { my $new = $_; $new =~ s/-/_/g; $new => $ref->{$_} } keys %$ref;
     for my $k ( keys %$ref ) {
         if ( ref $ref->{$k} eq 'HASH' ) {
@@ -69,6 +75,35 @@ sub translate_from_xml {
         }
     }
     return $ref;
+}
+
+sub translate_to_xml {
+    my $self = shift;
+    my $ref  = shift;
+    my %args = @_;
+
+    my %normal = map { $_ => 1 } keys %$ref;
+
+    if ( $args{boolean} ) {
+        for my $boolean ( @{ $args{boolean} } ) {
+            delete $normal{$_};
+            next unless exists $ref->{$boolean};
+            if ( $ref->{$boolean} ) {
+                $ref->{$boolean} = { content => 'true', type => 'boolean' };
+            }
+            else {
+                $ref->{$boolean} = { content => 'false', type => 'boolean' };
+            }
+        }
+    }
+
+    for my $normal ( keys %normal ) {
+        next unless exists $ref->{$normal};
+        $ref->{$normal} = { content => $ref->{$normal} };
+    }
+
+    $ref = { $args{root} => $ref } if $args{root};
+    return Net::Lighthouse::Util->write_xml($ref);
 }
 
 sub datetime_from_string {

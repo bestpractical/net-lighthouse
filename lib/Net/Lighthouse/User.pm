@@ -65,12 +65,9 @@ sub update {
     );
     my %args = ( ( map { $_ => $self->$_ } qw/name job website/ ), @_ );
 
-    for my $field (qw/name job website/) {
-        next unless exists $args{$field};
-        $args{$field} = { content => $args{$field} };
-    }
+    my $xml =
+      Net::Lighthouse::Util->translate_to_xml( \%args, root => 'user', );
 
-    my $xml = Net::Lighthouse->write_xml( { user => \%args } );
     my $ua  = $self->ua;
     my $url = $self->base_url . '/users/' . $self->id . '.xml';
 
@@ -97,7 +94,7 @@ sub memberships {
     my $res  = $ua->get($url);
     require Net::Lighthouse::User::Membership;
     if ( $res->is_success ) {
-        my $ms = Net::Lighthouse::Util->read_xml( $res->content )->{membership};
+        my $ms = Net::Lighthouse::Util->read_xml( $res->content )->{memberships}{membership};
         my @list = map {
             my $m = Net::Lighthouse::User::Membership->new;
             $m->load_from_xml($_);
