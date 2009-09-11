@@ -1,6 +1,5 @@
 package Net::Lighthouse::User;
 use Any::Moose;
-use XML::Simple;
 use Params::Validate ':all';
 use Net::Lighthouse::Util;
 extends 'Net::Lighthouse::Base';
@@ -71,7 +70,7 @@ sub update {
         $args{$field} = { content => $args{$field} };
     }
 
-    my $xml = XMLout( { user => \%args }, KeepRoot => 1 );
+    my $xml = Net::Lighthouse->write_xml( { user => \%args } );
     my $ua  = $self->ua;
     my $url = $self->base_url . '/users/' . $self->id . '.xml';
 
@@ -98,7 +97,7 @@ sub memberships {
     my $res  = $ua->get($url);
     require Net::Lighthouse::User::Membership;
     if ( $res->is_success ) {
-        my $ms = XMLin( $res->content, KeyAttr => [] )->{membership};
+        my $ms = Net::Lighthouse::Util->read_xml( $res->content )->{membership};
         my @list = map {
             my $m = Net::Lighthouse::User::Membership->new;
             $m->load_from_xml($_);

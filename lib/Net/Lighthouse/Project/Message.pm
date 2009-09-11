@@ -1,6 +1,5 @@
 package Net::Lighthouse::Project::Message;
 use Any::Moose;
-use XML::Simple;
 use Params::Validate ':all';
 use Net::Lighthouse::Util;
 extends 'Net::Lighthouse::Base';
@@ -115,7 +114,7 @@ sub create {
         $args{$field} = { content => $args{$field} };
     }
 
-    my $xml = XMLout( { message => \%args }, KeepRoot => 1);
+    my $xml = Net::Lighthouse->write_xml( { message => \%args });
     my $ua = $self->ua;
 
     my $url = $self->base_url . '/projects/' . $self->project_id . '/messages.xml';
@@ -150,7 +149,7 @@ sub create_comment {
 
     # TODO doc says <message>, but it doesn't work actually.
     # comment can work, though still with a problem
-    my $xml = XMLout( { comment => \%args }, KeepRoot => 1);
+    my $xml = Net::Lighthouse->write_xml( { comment => \%args });
     my $ua = $self->ua;
 
     my $url =
@@ -191,7 +190,7 @@ sub update {
         $args{$field} = { content => $args{$field} };
     }
 
-    my $xml = XMLout( { message => \%args }, KeepRoot => 1);
+    my $xml = Net::Lighthouse->write_xml( { message => \%args });
     my $ua = $self->ua;
     my $url =
         $self->base_url
@@ -241,7 +240,7 @@ sub list {
     my $ua  = $self->ua;
     my $res = $ua->get($url);
     if ( $res->is_success ) {
-        my $ms = XMLin( $res->content, KeyAttr => [] )->{message};
+        my $ms = Net::Lighthouse::Util->read_xml( $res->content )->{message};
         my @list = map {
             my $t = Net::Lighthouse::Project::Message->new(
                 map { $_ => $self->$_ }

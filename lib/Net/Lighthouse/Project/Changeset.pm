@@ -1,6 +1,5 @@
 package Net::Lighthouse::Project::Changeset;
 use Any::Moose;
-use XML::Simple;
 use Params::Validate ':all';
 use Net::Lighthouse::Util;
 extends 'Net::Lighthouse::Base';
@@ -88,7 +87,7 @@ sub create {
         $args{$field} = { content => $args{$field} };
     }
 
-    my $xml = XMLout( { changeset => \%args }, KeepRoot => 1);
+    my $xml = Net::Lighthouse->write_xml( { changeset => \%args });
     my $ua = $self->ua;
 
     my $url = $self->base_url . '/projects/' . $self->project_id . '/changesets.xml';
@@ -134,7 +133,7 @@ sub list {
     my $ua  = $self->ua;
     my $res = $ua->get($url);
     if ( $res->is_success ) {
-        my $cs = XMLin( $res->content, KeyAttr => [] )->{changeset};
+        my $cs = Net::Lighthouse::Util->read_xml( $res->content )->{changeset};
         my @list = map {
             my $t = Net::Lighthouse::Project::Changeset->new(
                 map { $_ => $self->$_ }

@@ -1,6 +1,5 @@
 package Net::Lighthouse::Project::Ticket;
 use Any::Moose;
-use XML::Simple;
 use Params::Validate ':all';
 use Net::Lighthouse::Util;
 extends 'Net::Lighthouse::Base';
@@ -160,7 +159,7 @@ sub create {
         $args{$field} = { content => $args{$field} };
     }
 
-    my $xml = XMLout( { ticket => \%args }, KeepRoot => 1);
+    my $xml = Net::Lighthouse->write_xml( { ticket => \%args });
     my $ua = $self->ua;
 
     my $url = $self->base_url . '/projects/' . $self->project_id . '/tickets.xml';
@@ -212,7 +211,7 @@ sub update {
         $args{$field} = { content => $args{$field} };
     }
 
-    my $xml = XMLout( { ticket => \%args }, KeepRoot => 1);
+    my $xml = Net::Lighthouse->write_xml( { ticket => \%args });
     my $ua = $self->ua;
     my $url =
         $self->base_url
@@ -278,7 +277,7 @@ sub list {
     my $ua  = $self->ua;
     my $res = $ua->get($url);
     if ( $res->is_success ) {
-        my $ts = XMLin( $res->content, KeyAttr => [] )->{ticket};
+        my $ts = Net::Lighthouse::Util->read_xml( $res->content )->{ticket};
         my @list = map {
             my $t = Net::Lighthouse::Project::Ticket->new(
                 map { $_ => $self->$_ }

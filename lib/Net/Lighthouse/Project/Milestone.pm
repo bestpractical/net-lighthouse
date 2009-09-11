@@ -1,6 +1,5 @@
 package Net::Lighthouse::Project::Milestone;
 use Any::Moose;
-use XML::Simple;
 use Params::Validate ':all';
 use Net::Lighthouse::Util;
 extends 'Net::Lighthouse::Base';
@@ -95,7 +94,7 @@ sub create {
         $args{$field} = { content => $args{$field} };
     }
 
-    my $xml = XMLout( { milestone => \%args }, KeepRoot => 1);
+    my $xml = Net::Lighthouse->write_xml( { milestone => \%args });
     my $ua = $self->ua;
 
     my $url = $self->base_url . '/projects/' . $self->project_id . '/milestones.xml';
@@ -130,7 +129,7 @@ sub update {
         $args{$field} = { content => $args{$field} };
     }
 
-    my $xml = XMLout( { milestone => \%args }, KeepRoot => 1);
+    my $xml = Net::Lighthouse->write_xml( { milestone => \%args });
     my $ua = $self->ua;
     my $url =
         $self->base_url
@@ -179,7 +178,7 @@ sub list {
     my $ua  = $self->ua;
     my $res = $ua->get($url);
     if ( $res->is_success ) {
-        my $ms = XMLin( $res->content, KeyAttr => [] )->{milestone};
+        my $ms = Net::Lighthouse::Util->read_xml( $res->content )->{milestone};
         my @list = map {
             my $t = Net::Lighthouse::Project::Milestone->new(
                 map { $_ => $self->$_ }
