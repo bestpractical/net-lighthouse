@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 29;
+use Test::More tests => 27;
 use DateTime;
 
 use_ok('Net::Lighthouse::Project::Ticket::Attachment');
@@ -13,8 +13,7 @@ isa_ok( $attachment, 'Net::Lighthouse::Project::Ticket::Attachment' );
 my @attrs = (
     'width',        'created_at',  'height',   'size',
     'content_type', 'uploader_id', 'filename', 'url',
-    'type',         'id',          'code',
-    'content', 'ua',
+    'id',           'code',        'content',  'ua',
 );
 
 for my $attr (@attrs) {
@@ -46,7 +45,6 @@ my %hash = (
     ),
     'filename'     => 'first',
     'url'  => 'http://sunnavy.lighthouseapp.com/attachments/249828/first',
-    'type' => 'Attachment',
     'id'   => 249828,
     'code' => '5ace4f26de37855e951eb13f5b07a1b1a0919466'
 
