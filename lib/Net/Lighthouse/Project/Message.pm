@@ -138,8 +138,7 @@ sub create_comment {
     );
     my %args = @_;
 
-    # TODO doc says <message>, but it doesn't work actually.
-    # comment can work
+    # TODO doc says <message>, but it's wrong, should be <comment>
     # see also http://help.lighthouseapp.com/discussions/api-developers/121-create-message-comment-bug
 
     my $xml =
