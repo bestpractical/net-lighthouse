@@ -19,7 +19,12 @@ has [ 'content_type', 'filename', 'url', 'code' ] => (
     is  => 'ro',
 );
 
-# make test happy, added Test::MockObject
+# make tests happy, added Test::MockObject
+if ( $INC{'Moose.pm'} ) {
+    require Moose::Util::TypeConstraints;
+    Moose::Util::TypeConstraints::class_type( 'LWP::UserAgent' );
+    Moose::Util::TypeConstraints::class_type( 'Test::MockObject' );
+}
 has 'ua' => ( is => 'ro', isa => 'LWP::UserAgent|Test::MockObject', );
 
 has 'content' => (
