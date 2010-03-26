@@ -1,6 +1,7 @@
 Revision history for Net-Lighthouse
 
-0.05
+0.05 Fri Mar 26 07:48:36 GMT 2010
+    * fixed Moose related issue
 
 0.04 Sat Sep 12 00:10:18 CST 2009
     * use XML::TreePP to parse xml
