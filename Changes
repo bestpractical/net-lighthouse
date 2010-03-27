@@ -1,5 +1,7 @@
 Revision history for Net-Lighthouse
 
+0.07
+
 0.06 Sat Mar 27 05:52:25 GMT 2010
     * fix the similar problem for Mouse(0.51+) as the one in 0.05 for Moose
 

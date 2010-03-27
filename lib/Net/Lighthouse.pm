@@ -8,7 +8,7 @@ use Net::Lighthouse::Token;
 use Net::Lighthouse::User;
 use base 'Net::Lighthouse::Base';
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 sub project { return shift->_new( 'Project' ) }
 sub user { return shift->_new( 'User' ) }
@@ -51,7 +51,7 @@ Net::Lighthouse - Perl interface to lighthouseapp.com
 
 =head1 VERSION
 
-This document describes Net::Lighthouse version 0.06
+This document describes Net::Lighthouse version 0.07
 
 
 =head1 SYNOPSIS
