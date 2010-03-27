@@ -25,6 +25,12 @@ if ( $INC{'Moose.pm'} ) {
     Moose::Util::TypeConstraints::class_type( 'LWP::UserAgent' );
     Moose::Util::TypeConstraints::class_type( 'Test::MockObject' );
 }
+else {
+    require Mouse::Util::TypeConstraints;
+    Mouse::Util::TypeConstraints::class_type( 'LWP::UserAgent' );
+    Mouse::Util::TypeConstraints::class_type( 'Test::MockObject' );
+}
+
 has 'ua' => ( is => 'ro', isa => 'LWP::UserAgent|Test::MockObject', );
 
 has 'content' => (
